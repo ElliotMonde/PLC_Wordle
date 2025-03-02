@@ -1,0 +1,1 @@
+Hello, world! This is a wordle-game created in C. We are a group of students studying programming language concepts (PLC).
