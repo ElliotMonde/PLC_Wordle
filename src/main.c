@@ -9,8 +9,8 @@ int main(int argc, char **argv)
     char *filename = "../test_inp.txt";
     char **string_array = file_to_string_array(filename, array_size);
     int i;
-    
-    printf("1 means word is valid, 0 means word is invalid.\n");
+
+    printf("0 means word is valid, 1 means word is invalid.\n");
     for (i = 0; i < array_size; i++)
     {
         if (!string_array[i])
