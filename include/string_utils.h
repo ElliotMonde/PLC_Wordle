@@ -6,6 +6,7 @@ char *banned_five_letter_words[] = {"these", "These", "that", "That", "\0"};
 
 int check_word(char *s, char **banned_array);
 int is_banned_word(char *str);
+void remove_banned_words(char ***string_array_ptr);
 int array_len(char **arr);
 int dynamic_string_len(char *str);
 char *get_random_word(char **str);

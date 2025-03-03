@@ -1,24 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+#include "../include/file_utils.h"
 #include "../include/string_utils.h"
 
 /**
  * @brief Get a random word from the input string.
  *
  * @param str char**
- * @return char* 
+ * @return char*
  */
-char *get_random_word(char **str){
+char *get_random_word(char **str)
+{
     int len = array_len(str);
     return str[random_index(len)];
 }
 
-int check_word(char* s, char** banned_array){
+int check_word(char *s, char **banned_array)
+{
     int i, arr_len = array_len(banned_array);
     for (i = 0; i < arr_len - 1; i++)
     {
-        if (!strcmp(s, banned_array[i])){
+        if (!strcmp(s, banned_array[i]))
+        {
             return 1;
         }
     }
@@ -26,11 +31,11 @@ int check_word(char* s, char** banned_array){
 }
 
 /**
- * @brief 
+ * @brief
  * Checks if the input word is a banned word. Returns 0 if not a banned word, else 1.
- * 
+ *
  * @param str char*
- * @return int 
+ * @return int
  */
 int is_banned_word(char *str)
 {
@@ -53,14 +58,71 @@ int is_banned_word(char *str)
 }
 
 /**
- * @brief Returns the number of elements in the string array.
- * 
- * @param arr char**
- * @return int 
+ * @brief
+ * The function removes banned words in (char**) string_array. The function takes a string array pointer, which will be pointed to a new string array which has copies of the valid words. The original string array and its strings will have their memory freed.
+ *
+ * @param string_array char**
  */
-int array_len(char** arr){
+void remove_banned_words(char ***string_array_ptr)
+{
+    int j = 0, i = 0;
+    char **holder;
+
+    while ((*string_array_ptr)[i])
+    {
+        if (!is_banned_word((*string_array_ptr)[i]))
+        {
+            j++;
+        }
+        i++;
+    }
+
+    if (!(holder = (char **)malloc(sizeof(char *) * (j + 1))))
+    {
+        perror("string_utils: error allocating memory.");
+        return;
+    }
+    i = 0;
+    j = 0;
+
+    while ((*string_array_ptr)[i])
+    {
+        if (!is_banned_word((*string_array_ptr)[i]))
+        {
+            holder[j] = strdup((*string_array_ptr)[i]);
+            if (!holder[j])
+            {
+                perror("string_utils: error allocating memory to holder.");
+                while(j > 0)
+                {
+                    free(holder[--j]);
+                }
+                free(holder);
+                return;
+            }
+            j++;
+        }
+        i++;
+    }
+    holder[j] = NULL;
+    i = 0;
+    while ((*string_array_ptr)[i]){
+        free((*string_array_ptr)[i]);
+        i++;
+    }
+    *string_array_ptr = holder;
+}
+
+/**
+ * @brief Returns the number of elements in the string array.
+ *
+ * @param arr char**
+ * @return int
+ */
+int array_len(char **arr)
+{
     int i = 0;
-    while (strcmp(arr[i], "\0"))
+    while (arr[i] && strcmp(arr[i], "\0"))
     {
         i++;
     }
@@ -69,27 +131,29 @@ int array_len(char** arr){
 
 /**
  * @brief Returns the number of characters in the string, excluding the '\0' at end of string.
- * 
+ *
  * @param str char*
- * @return int 
+ * @return int
  */
 int dynamic_string_len(char *str)
 {
     int i = 0;
-    while (str[i]){
+    while (str[i])
+    {
         i++;
     }
     return i;
 }
 
 /**
- * @brief 
+ * @brief
  * Returns a random integer using current time as seed.
  * the input upperbound is excluded from the range of possible return values.
  * @param upperbound int
- * @return int 
+ * @return int
  */
-int random_index(int upperbound){
+int random_index(int upperbound)
+{
     srand(time(NULL));
     return rand() % upperbound;
 }
