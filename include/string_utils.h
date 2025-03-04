@@ -14,5 +14,6 @@ char *get_random_word(char **str);
 int random_index(int upperbound_index);
 void to_lower(char *s);
 int hash_f(char *s);
+int *check_guess(char *guess, char *chosen_word, int len);
 #endif
 /**  EOF **/

@@ -6,6 +6,9 @@ int main(int argc, char **argv)
 {
     /** just a demo of the current utility functions: feel free to remove */
     int hashcode, array_size = 11;
+    char *chosen_word;
+    char *guess = (char*) malloc(sizeof(char) * 10);
+    int *result;
     char *filename = "../test_inp.txt";
     char **string_array = file_to_string_array(filename, array_size);
     int i;
@@ -29,9 +32,17 @@ int main(int argc, char **argv)
         printf("%s : %d\n", string_array[i], hashcode);
         i++;
     }
-
-    printf("\nChosen random word: %s .\n", get_random_word(string_array));
-
+    chosen_word = get_random_word(string_array);
+    printf("\nChosen random word: %s .\n", chosen_word);
+    scanf("%s", guess);
+    result = check_guess(guess, chosen_word, strlen(chosen_word));
+    for (i = 0; i < strlen(chosen_word); i++){
+        printf("%d,",result[i]);
+    }
+    puts("\n");
+    free(result);
+    free(guess);
+    free(chosen_word);
     free_string_array(string_array, array_len(string_array));
     return 0;
 }
