@@ -34,10 +34,12 @@ int main(int argc, char **argv)
     }
     chosen_word = strdup(get_random_word(string_array)); /* careful: if chosen_word isn't copied from string_array, then don't free it as they reference the same address.*/
     printf("\nChosen random word: %s .\n", chosen_word);
-    scanf("%s", guess);
+    fgets(guess, strlen(chosen_word) + 1, stdin);
     result = check_guess(guess, chosen_word, strlen(chosen_word));
-    for (i = 0; i < strlen(chosen_word); i++){
-        printf("%d,",result[i]);
+    printf("%s\n", guess);
+    for (i = 0; i < strlen(chosen_word); i++)
+    {
+        printf("%d,", result[i]);
     }
     puts("\n");
     free(result);
