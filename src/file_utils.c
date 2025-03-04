@@ -1,3 +1,6 @@
+#ifndef FILE_UTILS_C
+#define FILE_UTILS_C
+
 #include "../include/main.h"
 #include "../include/file_utils.h"
 
@@ -79,4 +82,5 @@ void free_string_array(char **string_array, int len){
     free(string_array);
 }
 
+#endif
 /**  EOF **/

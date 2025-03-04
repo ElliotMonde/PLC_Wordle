@@ -1,6 +1,19 @@
+#ifndef STRING_UTILS_C
+#define STRING_UTILS_C
+
 #include "../include/main.h"
 #include "../include/file_utils.h"
 #include "../include/string_utils.h"
+
+/**
+ * @brief
+ * The word that will be guessed in this round.
+ */
+typedef struct
+{
+    char *word;
+    int len;
+} chosen_word;
 
 /**
  * @brief Get a random word from the input string.
@@ -40,7 +53,7 @@ int is_banned_word(char *str)
     switch (len)
     {
     case 1:
-        return check_word(str, banned_one_letter_words);
+        return 1;
     case 2:
         return check_word(str, banned_two_letter_words);
     case 3:
@@ -191,4 +204,55 @@ int hash_f(char *s)
     return code;
 }
 
+/**
+ * @brief Checks the guess against the chosen word. for each letter in guess, if letter exists and is same position in word, 1 is assigned at the index of the output int array.
+ * If the letter exists but not the same position in chosen word, 2 is assigned at the index of the output int array. Else 0 is assigned at the index of the output array.
+ * 
+ * 1: correct letter and position,
+ * 
+ * 2: correct letter but incorrect position,
+ * 
+ * 0: wrong letter.
+ * 
+ * @param guess char*
+ * @param chosen_word char*
+ * @param len int
+ * @return int* 
+ */
+int *check_guess(char *guess, char *chosen_word, int len)
+{
+    int i;
+    int store[26];
+    int* res = (int*) malloc(sizeof(int) * len);
+    for (i = 0; i < 26; i++)
+    {
+        store[i] = 0;
+    }
+    for (i = 0; i < len; i++)
+    {
+        store[chosen_word[i] - 'a']++;
+    }
+    for (i = 0; i < len; i++)
+    {
+        if (store[guess[i] - 'a'] > 0)
+        {
+            if (chosen_word[i] == guess[i])
+            {
+                res[i] = 1;
+            }
+            else
+            {
+                res[i] = 2;
+            }
+            store[guess[i] - 'a']--;
+        }
+        else
+        {
+            res[i] = 0;
+        }
+    }
+    return res;
+}
+
+#endif
 /** EOF **/
