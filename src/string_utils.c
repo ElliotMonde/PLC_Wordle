@@ -1,3 +1,6 @@
+#ifndef STRING_UTILS_C
+#define STRING_UTILS_C
+
 #include "../include/main.h"
 #include "../include/file_utils.h"
 #include "../include/string_utils.h"
@@ -40,7 +43,7 @@ int is_banned_word(char *str)
     switch (len)
     {
     case 1:
-        return check_word(str, banned_one_letter_words);
+        return 1;
     case 2:
         return check_word(str, banned_two_letter_words);
     case 3:
@@ -191,4 +194,5 @@ int hash_f(char *s)
     return code;
 }
 
+#endif
 /** EOF **/

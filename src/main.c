@@ -18,11 +18,10 @@ int main(int argc, char **argv)
         }
         printf("%s : %d\n", string_array[i], is_banned_word(string_array[i]));
     }
-    remove_banned_words(&string_array);
 
+    remove_banned_words(&string_array);
     puts("\nAfter removing banned words: together with hashcode of words\n");
     i = 0;
-    printf("length: %d\n", array_len(string_array));
     while (string_array[i])
     {
         to_lower(string_array[i]);
@@ -30,6 +29,9 @@ int main(int argc, char **argv)
         printf("%s : %d\n", string_array[i], hashcode);
         i++;
     }
+
+    printf("\nChosen random word: %s .\n", get_random_word(string_array));
+
     free_string_array(string_array, array_len(string_array));
     return 0;
 }
