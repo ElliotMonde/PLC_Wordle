@@ -32,7 +32,7 @@ int main(int argc, char **argv)
         printf("%s : %d\n", string_array[i], hashcode);
         i++;
     }
-    chosen_word = get_random_word(string_array);
+    chosen_word = strdup(get_random_word(string_array)); /* careful: if chosen_word isn't copied from string_array, then don't free it as they reference the same address.*/
     printf("\nChosen random word: %s .\n", chosen_word);
     scanf("%s", guess);
     result = check_guess(guess, chosen_word, strlen(chosen_word));
@@ -41,7 +41,6 @@ int main(int argc, char **argv)
     }
     puts("\n");
     free(result);
-    free(guess);
     free(chosen_word);
     free_string_array(string_array, array_len(string_array));
     return 0;
