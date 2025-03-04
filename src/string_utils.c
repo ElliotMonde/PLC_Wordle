@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
+#include "../include/main.h"
 #include "../include/file_utils.h"
 #include "../include/string_utils.h"
 
@@ -93,7 +90,7 @@ void remove_banned_words(char ***string_array_ptr)
             if (!holder[j])
             {
                 perror("string_utils: error allocating memory to holder.");
-                while(j > 0)
+                while (j > 0)
                 {
                     free(holder[--j]);
                 }
@@ -106,7 +103,8 @@ void remove_banned_words(char ***string_array_ptr)
     }
     holder[j] = NULL;
     i = 0;
-    while ((*string_array_ptr)[i]){
+    while ((*string_array_ptr)[i])
+    {
         free((*string_array_ptr)[i]);
         i++;
     }
@@ -156,6 +154,41 @@ int random_index(int upperbound)
 {
     srand(time(NULL));
     return rand() % upperbound;
+}
+
+/**
+ * @brief
+ * References a string pointer and converts uppercase characters in string to lowercase.
+ *
+ * @param s char*
+ */
+void to_lower(char *s)
+{
+    int i = -1;
+    while (s[++i])
+    {
+        if (s[i] >= 'A' && s[i] <= 'Z')
+        {
+            s[i] -= 'A' - 'a';
+        }
+    }
+}
+
+/**
+ * @brief
+ * The hash function returns an almost-unique hashcode for unique words.
+ *
+ * @param s char*
+ * @return int
+ */
+int hash_f(char *s)
+{
+    int i = -1, code = 0;
+    while (s[++i])
+    {
+        code += s[i] * (int)pow(10, i);
+    }
+    return code;
 }
 
 /** EOF **/

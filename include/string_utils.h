@@ -11,4 +11,6 @@ int array_len(char **arr);
 int dynamic_string_len(char *str);
 char *get_random_word(char **str);
 int random_index(int upperbound_index);
+void to_lower(char *s);
+int hash_f(char *s);
 /**  EOF **/

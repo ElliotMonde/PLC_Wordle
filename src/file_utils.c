@@ -1,6 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include<stdlib.h>
+#include "../include/main.h"
 #include "../include/file_utils.h"
 
 #define MAX_WORDS 1000
