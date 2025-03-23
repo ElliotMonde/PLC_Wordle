@@ -3,9 +3,40 @@
 
 #include "../include/main.h"
 #include "../include/file_utils.h"
+#include "../include/string_utils.h"
 
 #define MAX_WORDS 1000
 #define BUFFER_SIZE 1024
+
+char *get_filepath(void){
+    char* filepath = malloc(sizeof(char) * 256);
+    if (!filepath){
+        perror("Memory allocation failed in file_utils.c.");
+        return NULL;
+    }
+    puts("Enter valid relative file path: \n");
+    if (fgets(filepath, 256, stdin) == NULL){
+        perror("Error reading file path. Please ensure filepath is less than 256 characters and valid relative filepath.");
+        free(filepath);
+        return NULL;
+    }
+
+    filepath[strcspn(filepath, "\n")] = 0;
+    return filepath;
+}
+
+int check_txt_file(char* filename){
+    int len = dynamic_string_len(filename);
+    int i = 0;
+    char file_type[5];
+    while (len - 4 + i < len)
+    {
+        file_type[i] = filename[len - 4 + i];
+        i++;
+    }
+    file_type[i] = '\0';
+    return !strcmp(file_type, ".txt");
+}
 
 /**
  * @brief 
@@ -25,10 +56,9 @@ char **file_to_string_array(char *filename, int array_size)
     char **string_array;
     char *delimiters = " ,.-_!?;:\n\t\"\'()";
     FILE *f = fopen(filename, "r");
-
     if (!f)
     {
-        perror("file_utils: Error: could not open file.\n");
+        perror("file_utils: Error: could not open file.");
         return NULL;
     }
 
@@ -43,7 +73,6 @@ char **file_to_string_array(char *filename, int array_size)
         fclose(f);
         return NULL;
     }
-
     while (i < array_size && fgets(buffer, BUFFER_SIZE, f))
     {
         token = strtok(buffer, delimiters);
