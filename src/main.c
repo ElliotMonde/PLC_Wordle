@@ -24,6 +24,7 @@ int main(int argc, char **argv)
     puts("\n");
 
     /** free malloc */
+    free(guess);
     free(result);
     free(game->chosen_word->val);
     free(game->chosen_word);
