@@ -221,6 +221,7 @@ int *check_guess(char *guess, char *chosen_word, int len)
     int i;
     int store[26];
     int *res = (int *)malloc(sizeof(int) * len);
+    to_lower(guess);
     for (i = 0; i < 26; i++)
     {
         store[i] = 0;

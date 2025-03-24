@@ -45,7 +45,9 @@ void start_new_game(Game *game)
             if (buffer != NULL)
             {
                 buffer[strcspn(buffer, "\n")] = 0;
-                break;
+                if (isFileValid(buffer)){
+                    break;
+                }
             }
         }
         string_arr = file_to_string_array(buffer, 1000);
