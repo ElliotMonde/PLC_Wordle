@@ -79,4 +79,36 @@ void free_string_array(char **string_array, int len){
     free(string_array);
 }
 
+/**
+ * @brief 
+ * Function to check if a file is either .pdf or .txt
+ * 
+ * @param filename const char*
+ */
+int isFileValid(const char *filename) {
+    const char *extensions[] = {".pdf", ".txt", ".doc", ".bin", ".dat", "\0"};
+    /*Find the position of the last '.' in the filename */
+    const char *dot = strrchr(filename, '.');
+    int i = 0;
+
+    if (dot == NULL) {
+        return 0; /* No extension found */
+    }
+    
+    while (*extensions[i] != '\0') {
+        if (strcasecmp(dot, extensions[i]) == 0) { /* Compare the extension with the expected one */
+            FILE *file = fopen(filename, "r"); /* check if the file exists */
+            if (file != NULL) {
+                fclose(file); /* Close the file if it exists */
+                return 1; /* File exists and has a valid extension */
+            } else {
+                return 0; /* File does not exist or cannot be accessed */
+            }
+            return 1;
+        }
+        i++;
+    }
+    return 0;
+}
+
 /**  EOF **/
