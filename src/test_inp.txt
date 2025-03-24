@@ -1,0 +1,1 @@
+HELLO, world! This is a  WoRdLE wOrDlE-game created in C. We are a group of students studying programming language concepts (PLC).

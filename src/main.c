@@ -1,50 +1,35 @@
 #include "../include/main.h"
 #include "file_utils.c"
 #include "string_utils.c"
+#include "state_utils.c"
 
 int main(int argc, char **argv)
 {
-    /** just a demo of the current utility functions: feel free to remove */
-    int hashcode, array_size = 11;
-    char *chosen_word;
-    char *guess = (char*) malloc(sizeof(char) * 10);
+    Game *game;
+    char *guess;
     int *result;
-    char *filename = "../test_inp.txt";
-    char **string_array = file_to_string_array(filename, array_size);
     int i;
-    puts("0 means word is valid, 1 means word is invalid.\n");
-    for (i = 0; i < array_size; i++)
-    {
-        if (!string_array[i])
-        {
-            break;
-        }
-        printf("%s : %d\n", string_array[i], is_banned_word(string_array[i]));
-    }
+    game = (Game *)malloc(sizeof(Game));
 
-    remove_banned_words(&string_array);
-    puts("\nAfter removing banned words: together with hashcode of words\n");
-    i = 0;
-    while (string_array[i])
-    {
-        to_lower(string_array[i]);
-        hashcode = hash_f(string_array[i]);
-        printf("%s : %d\n", string_array[i], hashcode);
-        i++;
-    }
-    chosen_word = strdup(get_random_word(string_array)); /* careful: if chosen_word isn't copied from string_array, then don't free it as they reference the same address.*/
-    printf("\nChosen random word: %s .\n", chosen_word);
-    fgets(guess, strlen(chosen_word) + 1, stdin);
-    result = check_guess(guess, chosen_word, strlen(chosen_word));
+    start_new_game(game);
+    printf("\nChosen random word: %s\n", game->chosen_word->val);
+    guess = (char *)malloc(sizeof(char) * game->chosen_word->len + 1);
+    fgets(guess, game->chosen_word->len + 1, stdin);
+    result = check_guess(guess, game->chosen_word->val, game->chosen_word->len);
     printf("%s\n", guess);
-    for (i = 0; i < strlen(chosen_word); i++)
+    for (i = 0; i < game->chosen_word->len; i++)
     {
         printf("%d,", result[i]);
     }
     puts("\n");
+
+    /** free malloc */
+    free(guess);
     free(result);
-    free(chosen_word);
-    free_string_array(string_array, array_len(string_array));
+    free(game->chosen_word->val);
+    free(game->chosen_word);
+    free(game);
+
     return 0;
 }
 

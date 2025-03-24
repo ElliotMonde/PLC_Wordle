@@ -5,6 +5,12 @@ char *banned_three_letter_words[] = {"she", "She", "are", "Are", "has", "Has", "
 char *banned_four_letter_words[] = {"have", "Have", "they", "They", "them", "Them", "this", "This", "that", "That", "\0"};
 char *banned_five_letter_words[] = {"these", "These", "that", "That", "\0"};
 
+typedef struct {
+    char *val;
+    int len;
+} Chosen_Word;
+
+int check_txt_file(char *filename);
 int check_word(char *s, char **banned_array);
 int is_banned_word(char *str);
 void remove_banned_words(char ***string_array_ptr);

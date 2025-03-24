@@ -5,28 +5,6 @@
 #include "../include/file_utils.h"
 #include "../include/string_utils.h"
 
-/**
- * @brief
- * The word that will be guessed in this round.
- */
-typedef struct
-{
-    char *word;
-    int len;
-} chosen_word;
-
-/**
- * @brief Get a random word from the input string.
- *
- * @param str char**
- * @return char*
- */
-char *get_random_word(char **str)
-{
-    int len = array_len(str);
-    return str[random_index(len)];
-}
-
 int check_word(char *s, char **banned_array)
 {
     int i, arr_len = array_len(banned_array);
@@ -121,6 +99,7 @@ void remove_banned_words(char ***string_array_ptr)
         free((*string_array_ptr)[i]);
         i++;
     }
+
     *string_array_ptr = holder;
 }
 
@@ -157,6 +136,18 @@ int dynamic_string_len(char *str)
 }
 
 /**
+ * @brief Get a random word from the input string.
+ *
+ * @param str char**
+ * @return char*
+ */
+char *get_random_word(char **str)
+{
+    int len = array_len(str);
+    return str[random_index(len)];
+}
+
+/**
  * @brief
  * Returns a random integer using current time as seed.
  * the input upperbound is excluded from the range of possible return values.
@@ -165,8 +156,14 @@ int dynamic_string_len(char *str)
  */
 int random_index(int upperbound)
 {
-    srand(time(NULL));
-    return rand() % upperbound;
+    int res = 0;
+    srand(getpid() * time(NULL));
+    if (upperbound <= 0)
+    {
+        return 0;
+    }
+    res = rand() % upperbound;
+    return res;
 }
 
 /**
