@@ -90,7 +90,6 @@ Game *start_new_game(void)
 void turn(Game *game)
 { /** check turn number < chosen word len outside */
     int *result;
-    char flushc;
     char *guess = (char *)malloc(sizeof(char) * (game->chosen_word->len + 1));
     game->turn += 1;
 
@@ -104,7 +103,7 @@ void turn(Game *game)
         {
             game->guessed_words[game->turn - 1] = guess;
         }
-        while ((flushc = getchar()) != '\n' && flushc != EOF);
+        fseek(stdin, 0, SEEK_END);
     };
     result = check_guess(guess, game->chosen_word->val, game->chosen_word->len);
 
