@@ -46,7 +46,6 @@ Game *start_new_game(void)
     {
         while (1)
         {
-            puts("Input relative-path of text file to load words from:\n");
             buffer = get_filepath();
             if (buffer != NULL)
             {
@@ -54,6 +53,8 @@ Game *start_new_game(void)
                 if (isFileValid(buffer))
                 {
                     break;
+                }else{
+                    puts("\nRelative file path is invalid. Please try again!\n");
                 }
             }
         }
