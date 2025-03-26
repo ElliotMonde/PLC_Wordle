@@ -14,7 +14,7 @@ char *get_filepath(void){
         perror("Memory allocation failed in file_utils.c.");
         return NULL;
     }
-    puts("Enter valid relative file path: \n");
+    puts("Input relative-path of text file to load words from:\n");
     if (fgets(filepath, 256, stdin) == NULL){
         perror("Error reading file path. Please ensure filepath is less than 256 characters and valid relative filepath.");
         free(filepath);
