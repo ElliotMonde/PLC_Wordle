@@ -5,13 +5,11 @@
 
 int main(int argc, char **argv)
 {
-    Game *game;
     char *guess;
     int *result;
     int i;
-    game = (Game *)malloc(sizeof(Game));
 
-    start_new_game(game);
+    Game *game = start_new_game();
     printf("\nChosen random word: %s\n", game->chosen_word->val);
     guess = (char *)malloc(sizeof(char) * game->chosen_word->len + 1);
     fgets(guess, game->chosen_word->len + 1, stdin);
@@ -26,9 +24,7 @@ int main(int argc, char **argv)
     /** free malloc */
     free(guess);
     free(result);
-    free(game->chosen_word->val);
-    free(game->chosen_word);
-    free(game);
+    free_game(game);
 
     return 0;
 }

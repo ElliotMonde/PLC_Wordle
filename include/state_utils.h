@@ -22,8 +22,12 @@ typedef struct
     char **guessed_words;
 } Game;
 
-void change_state(Game *game, int new_state);
-void start_new_game(Game* game);
-void game_start_loop(char* buffer, int j, int max_filepath_length);
+void call_state(Game *game, int new_state);
+Game* start_new_game(void);
+void turn(Game* game);
+int isWin(int *result, int len);
+int is_new_guess(char *guess, char **guessed_words);
+void display_guesses(char **guessed_words);
+void free_game(Game *game);
 #endif
 /** EOF **/
