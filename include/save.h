@@ -13,4 +13,5 @@ void saveStats(gameStats * Stats, const char * fileName);
 
 int loadStats(gameStats * Stats, const char * fileName);
 
+void updateStats(gameStats *Stats, int result);
 #endif

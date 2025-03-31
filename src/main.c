@@ -2,9 +2,11 @@
 #include "file_utils.c"
 #include "string_utils.c"
 #include "state_utils.c"
+#include "save.c"
 
 int main(int argc, char **argv)
 {
+    gameStats Stats;
     Game *game = start_new_game();
     while (game->state == TURN){
         call_state(game);

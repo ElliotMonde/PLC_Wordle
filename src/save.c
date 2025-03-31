@@ -1,6 +1,9 @@
+#ifndef SAVE_C
+#define SAVE_C
+
 #include "../include/main.h"
 #include "../include/file_utils.h"
-#include "save.h"
+#include "../include/save.h"
 
 void newStats(gameStats * Stats){
     Stats->totalWins = 0;
@@ -28,3 +31,14 @@ int loadStats(gameStats * Stats, const char * fileName){
     fclose(saveFile);
     return 1;
 }
+
+void updateStats(gameStats *Stats, int result) {
+    if (result == 1) { // Win
+        Stats->totalWins++;
+        Stats->streak++;
+    } else if (result == 0) { // Loss
+        Stats->totalLosses++;
+        Stats->streak = 0; // Reset streak on loss
+    }
+}
+#endif
