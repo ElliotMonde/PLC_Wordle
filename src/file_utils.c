@@ -8,6 +8,26 @@
 #define MAX_WORDS 1000
 #define BUFFER_SIZE 1024
 
+// Function to prompt for user input (Y/N)
+int get_user_input(void) {
+    char selected_input;
+    printf("Would you like to load an existing save file? (Y/N) : ");
+    
+    if (scanf(" %c", &selected_input) != 1) {
+        puts("Invalid input. Please enter Y or N.");
+        while (getchar() != '\n');
+        return -1;
+    }
+
+    selected_input = toupper(selected_input);
+    if (selected_input != 'Y' && selected_input != 'N') {
+        puts("Invalid input. Please enter Y or N.");
+        return -1;
+    }
+
+    return selected_input;
+}
+
 char *get_filepath(void){
     char* filepath = malloc(sizeof(char) * 256);
     if (!filepath){

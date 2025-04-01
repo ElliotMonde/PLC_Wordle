@@ -10,33 +10,20 @@ void call_state(Game *game)
     switch (game->state)
     {
     case START:
-        /** prompt user to start new game or load save, reject other inputs */
+        /** Introduce game */
         printf("Welcome to the Game!\n");
         game->state = LOAD;
         break;
     case LOAD:
-        /** prompt user for save file or new, reject other inputs */
-        {
-            gameStats *loadedStats = load_option();
-            if (loadedStats != NULL) {
-                game->stats = loadedStats;
-                game->state = TURN;
-            } else {
-                game->state = START;
-            }
-        }
+        /** prompt user for save file or new, reject other inputs */        
         break;
     case WIN:
         /** display game stats, save game, back to start on user press */
-        updateStats(game->stats, 1);
         display_win(game);
-        game->state = START;
         break;
     case LOSE:
         /** display game stats, save game, back to start on user press */
-        updateStats(game->stats, 0);
         display_lose(game);
-        game->state = START;
         break;
     case TURN:
         /** prompt user for guess, and checks guess */
@@ -44,75 +31,11 @@ void call_state(Game *game)
         break;
     case SAVE:
         /** save game, then return to previous/next state */
-        saveStats(game->stats, "game_save.txt");
-        game->state = START;
         break;
     }
-}
+}z
 
-// Function to prompt for user input (Y/N)
-int get_user_input(void) {
-    char selected_input;
-    printf("Would you like to load an existing save file? (Y/N) : ");
-    if (scanf(" %c", &selected_input) != 1) {
-        puts("Invalid input. Please enter Y or N.");
-        while (getchar() != '\n');
-        return -1;
-    }
-    return selected_input;
-}
 
-// Function to handle file loading attempts
-int attempt_to_load_file(gameStats *Stats) {
-    int attempts = 3;
-    char *buffer;
-
-    while (attempts--) {
-        buffer = get_filepath();
-        if (buffer != NULL) {
-            buffer[strcspn(buffer, "\n")] = 0;
-            if (isFileValid(buffer)) {
-                if (loadStats(Stats, buffer) == 1) {
-                    puts("\nSave File Loaded Successfully!\n");
-                    free(buffer);
-                    return 1;  // Success
-                }
-            } else {
-                puts("\nRelative file path is invalid. Please try again!\n");
-            }
-            free(buffer);
-        }
-    }
-    puts("Maximum attempts reached. Returning to main menu.\n");
-    return 0;  // Failure
-}
-
-gameStats *load_option(void) {
-    gameStats *Stats = (gameStats *)malloc(sizeof(gameStats));
-    if (Stats == NULL) {
-        puts("Memory allocation failed.");
-        return NULL;
-    }
-
-    while (1) {
-        int selected_input = get_user_input();
-        if (selected_input == 'Y') {
-            if (attempt_to_load_file(Stats)) {
-                return Stats;
-            } else {
-                free(Stats);
-                return NULL;
-            }
-        } 
-        else if (selected_input == 'N') {
-            newStats(Stats);
-            return Stats;
-        } 
-        else {
-            puts("Invalid input. Please enter Y or N.");
-        }
-    }
-}
 
 Game *start_new_game(void)
 {

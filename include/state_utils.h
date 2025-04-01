@@ -20,12 +20,8 @@ typedef struct
     char *filepath; /* save-file path for loading?*/
     Chosen_Word *chosen_word;
     char **guessed_words;
-    gameStats * stats;
 } Game;
 
-int get_user_input(void);
-int attempt_to_load_file(gameStats *Stats);
-gameStats * load_option(void);
 void call_state(Game *game);
 Game* start_new_game(void);
 void turn(Game* game);

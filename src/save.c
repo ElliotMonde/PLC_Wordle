@@ -3,42 +3,57 @@
 
 #include "../include/main.h"
 #include "../include/file_utils.h"
+#include "../include/state_utils.h"
 #include "../include/save.h"
 
-void newStats(gameStats * Stats){
-    Stats->totalWins = 0;
-    Stats->totalLosses = 0;
-    Stats->streak = 0;
+void newGame(saveFile * playerFile){
+    playerFile->totalWins = 0;
+    playerFile->totalLosses = 0;
+    playerFile->streak = 0;
+    playerFile->gameInstance = (Game *) malloc(sizeof(Game));
+    playerFile->gameInstance = start_new_game();
 }
 
-void saveStats(gameStats * Stats, const char * fileName){
-    FILE * saveFile = fopen(fileName,"wb");
-    if (!saveFile){
+void saveGame(saveFile * playerFile, const char * fileName){
+    FILE * sFile = fopen(fileName,"wb");
+    if (!sFile){
         perror("Invalid Save File Name");
         return;
     }
-    fwrite(Stats,sizeof(gameStats),1,saveFile);
-    fclose(saveFile);
+    fwrite(playerFile,sizeof(saveFile),1,sFile);
+    fclose(sFile);
 }
 
-int loadStats(gameStats * Stats, const char * fileName){
-    FILE * saveFile = fopen(fileName,"rb");
-    if (!saveFile){
+int loadGame(saveFile * playerFile, const char * fileName){
+    FILE * sFile = fopen(fileName,"rb");
+    if (!sFile){
         perror("Invalid Save File Name");
         return 0;
     }
-    fread(Stats,sizeof(gameStats),1,saveFile);
-    fclose(saveFile);
+    fread(playerFile,sizeof(saveFile),1,sFile);
+    fclose(sFile);
     return 1;
 }
 
-void updateStats(gameStats *Stats, int result) {
+void updateStats(saveFile * playerFile, int result) {
     if (result == 1) { // Win
-        Stats->totalWins++;
-        Stats->streak++;
+        playerFile->totalWins++;
+        playerFile->streak++;
     } else if (result == 0) { // Loss
-        Stats->totalLosses++;
-        Stats->streak = 0; // Reset streak on loss
+        playerFile->totalLosses++;
+        playerFile->streak = 0; // Reset streak on loss
+    }
+}
+
+Game * getGameInstance(saveFile * playerFile){
+    return playerFile->gameInstance;
+}
+
+void freeGameInstance(saveFile *playerFile) {
+    if (!playerFile) return;
+    if (playerFile->gameInstance) {
+        free(playerFile->gameInstance);
+        playerFile->gameInstance = NULL;
     }
 }
 #endif

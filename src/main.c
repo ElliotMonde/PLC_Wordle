@@ -6,15 +6,26 @@
 
 int main(int argc, char **argv)
 {
-    gameStats Stats;
-    Game *game = start_new_game();
-    while (game->state == TURN){
-        call_state(game);
+    saveFile * playerFile = (saveFile *)malloc(sizeof(saveFile));
+    Game * gameObject; // Game Object not recognised cause sate_utils.h not included
+    int newOrLoad = get_user_input();
+    while (newOrLoad == -1){
+        newOrLoad = get_user_input();
     }
-    call_state(game);
+    if (newOrLoad == 121){ //if "Y", Load Existing File
+        loadGame(playerFile);
+    }
+    else{ //if "N", Load New File
+        newGame(playerFile);
+    }
+    gameObject = getGameInstance(playerFile);
+    while (gameObject->state == TURN){
+        call_state(gameObject);
+    }
+    call_state(gameObject);
 
     /** free malloc */
-    free_game(game);
+    free_game(gameObject);
 
     return 0;
 }

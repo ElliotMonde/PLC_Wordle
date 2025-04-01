@@ -5,13 +5,19 @@ typedef struct{
     int totalWins;
     int totalLosses;
     int streak;
-}gameStats;
+    Game * gameInstance;
+}saveFile;
 
-void newStats(gameStats * Stats);
+void newGame(saveFile * playerFile);
 
-void saveStats(gameStats * Stats, const char * fileName);
+void saveGame(saveFile * playerFile, const char * fileName);
 
-int loadStats(gameStats * Stats, const char * fileName);
+int loadGame(saveFile * playerFile, const char * fileName);
 
-void updateStats(gameStats *Stats, int result);
+void updateStats(saveFile * playerFile, int result);
+
+Game * getGameInstance(saveFile * playerFile);
+
+void freeGameInstance(saveFile * playerFile);
+
 #endif
