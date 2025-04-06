@@ -3,31 +3,91 @@
 #include "../include/main.h"
 #include "../include/state_utils.h"
 #include "../include/file_utils.h"
+#include "../include/gui.h" 
+#include <string.h>
+#include <stdbool.h>
+
+#define MAX_TURNS 6
 
 void change_state(Game *game, int state)
 {
+    game->state = state;
+
     switch (state)
     {
     case START:
-        /** prompt user to start new game or load save, reject other inputs */
+        print_welcome();  // <--- Terminal banner
         break;
+
     case NEW_GAME:
-        /** prompt user for file input, reject other inputs */
+        start_new_game(game);  // <--- This already sets state = TURN
         break;
-    case LOAD:
-        /** prompt user for save file, reject other inputs */
-        break;
-    case WIN:
-        /** display game stats, save game, back to start on user press */
-        break;
-    case LOSE:
-        /** display game stats, save game, back to start on user press */
-        break;
+
     case TURN:
-        /** prompt user for guess, and checks guess */
+    {
+        char *guess = malloc(sizeof(char) * (game->chosen_word->len + 2));
+        int *result;
+        bool is_correct;
+
+        while (game->turn <= MAX_TURNS)
+        {
+            printf("\nAttempt %d of %d\n", game->turn, MAX_TURNS);
+            printf("Enter your guess: ");
+
+            fgets(guess, game->chosen_word->len + 2, stdin);
+            guess[strcspn(guess, "\n")] = 0;
+
+            if ((int)strlen(guess) != game->chosen_word->len)
+            {
+                printf("Please enter a %d-letter word.\n", game->chosen_word->len);
+                continue;
+            }
+
+            result = check_guess(guess, game->chosen_word->val, game->chosen_word->len);
+            print_guess_feedback(guess, result, game->chosen_word->len);  // <--- use GUI
+
+            is_correct = true;
+            for (int i = 0; i < game->chosen_word->len; i++)
+            {
+                if (result[i] != 2)
+                {
+                    is_correct = false;
+                    break;
+                }
+            }
+
+            free(result);
+
+            if (is_correct)
+            {
+                change_state(game, WIN);
+                break;
+            }
+
+            game->turn++;
+        }
+
+        if (!is_correct)
+        {
+            change_state(game, LOSE);
+        }
+
+        free(guess);
         break;
+    }
+
+    case WIN:
+        print_win_message();  // <--- use GUI
+        break;
+
+    case LOSE:
+        print_game_over(game->chosen_word->val);  // <--- use GUI
+        break;
+
     case SAVE:
-        /** save game, then return to previous/next state */
+        break;
+
+    case LOAD:
         break;
     }
 }
