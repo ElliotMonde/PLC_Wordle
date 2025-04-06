@@ -15,6 +15,7 @@ void call_state(Game *game, Stats* stats)
         /** display game stats, save game, back to start on user press */
         win(game, stats);
         break;
+
     case LOSE:
         /** display game stats, save game, back to start on user press */
         lose(game, stats);
