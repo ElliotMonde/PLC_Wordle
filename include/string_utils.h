@@ -10,7 +10,7 @@ typedef struct {
     int len;
 } Chosen_Word;
 
-int check_txt_file(char *filename);
+int check_file_type(char *filename, char* ext);
 int check_word(char *s, char **banned_array);
 int is_banned_word(char *str);
 void remove_banned_words(char ***string_array_ptr);

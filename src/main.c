@@ -5,14 +5,16 @@
 
 int main(int argc, char **argv)
 {
-    Game *game = start_new_game();
-    while (game->state == TURN){
-        call_state(game);
+    Stats *stats = (Stats *)malloc(sizeof(Stats));
+    Game *game = start_game(stats);
+    while (game->state == TURN)
+    {
+        call_state(game, stats);
     }
-    call_state(game);
+    call_state(game, stats);
 
     /** free malloc */
-    free_game(game);
+    free_game(game, stats);
 
     return 0;
 }

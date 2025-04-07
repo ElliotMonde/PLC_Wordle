@@ -8,14 +8,39 @@
 #define MAX_WORDS 1000
 #define BUFFER_SIZE 1024
 
-char *get_filepath(void){
-    char* filepath = malloc(sizeof(char) * 256);
-    if (!filepath){
+int get_user_input(void)
+{
+    char c;
+
+    while (1)
+    {
+        puts("[n] New Game\n[l] Load Game\n");
+        c = fgetc(stdin);
+        fseek(stdin, 0, SEEK_END);
+        switch (c)
+        {
+        case 'n':
+            return 1;
+        case 'l':
+            return 0;
+        default:
+            break;
+        }
+        puts("Unrecognised input. Please try again.\n");
+    }
+    return 1;
+}
+
+char *get_filepath(void)
+{
+    char *filepath = malloc(sizeof(char) * 256);
+    if (!filepath)
+    {
         perror("Memory allocation failed in file_utils.c.");
         return NULL;
     }
-    puts("Input relative-path of text file to load words from:\n");
-    if (fgets(filepath, 256, stdin) == NULL){
+    if (fgets(filepath, 256, stdin) == NULL)
+    {
         perror("Error reading file path. Please ensure filepath is less than 256 characters and valid relative filepath.");
         free(filepath);
         return NULL;
@@ -25,28 +50,24 @@ char *get_filepath(void){
     return filepath;
 }
 
-int check_txt_file(char* filename){
-    int len = dynamic_string_len(filename);
-    int i = 0;
+int check_file_type(char *filename, char *ext)
+{
     char file_type[5];
-    while (len - 4 + i < len)
-    {
-        file_type[i] = filename[len - 4 + i];
-        i++;
-    }
-    file_type[i] = '\0';
-    return !strcmp(file_type, ".txt");
+    int ext_len = dynamic_string_len(ext);
+    strncpy(file_type, filename + dynamic_string_len(filename) - ext_len, ext_len);
+    file_type[ext_len] = '\0';
+    return !strcmp(file_type, ext);
 }
 
 /**
- * @brief 
+ * @brief
  * This function reads from a file <array_size> number of words, and returns a string array (char**) of length <array_size> with first <array_size> words as elements.
- * 
+ *
  * Pre-condition: array_size <= 1000, memory allocated to string_array and the string pointers in the array has to be freed.
- * 
- * @param filename char* 
+ *
+ * @param filename char*
  * @param array_size int
- * @return char** 
+ * @return char**
  */
 char **file_to_string_array(char *filename, int array_size)
 {
@@ -68,7 +89,7 @@ char **file_to_string_array(char *filename, int array_size)
     }
 
     if (!(string_array = (char **)malloc(sizeof(char *) * (array_size + 1))))
-    { 
+    {
         perror("file_utils: Error: Memory allocation failed.");
         fclose(f);
         return NULL;
@@ -98,43 +119,52 @@ char **file_to_string_array(char *filename, int array_size)
 }
 
 /**
- * @brief 
+ * @brief
  * Frees the memory allocated to a string array with <len> number of string pointers.
- * 
+ *
  * @param string_array char**
  * @param len int
  */
-void free_string_array(char **string_array, int len){
+void free_string_array(char **string_array, int len)
+{
     int i;
-    for (i = 0; i < len; i++){
+    for (i = 0; i < len; i++)
+    {
         free(string_array[i]);
     }
     free(string_array);
 }
 
 /**
- * @brief 
+ * @brief
  * Function to check if a file is either .pdf or .txt
- * 
+ *
  * @param filename const char*
+ * @author Jing Yee
  */
-int isFileValid(const char *filename) {
-    const char *extensions[] = {".pdf", ".txt", ".doc", ".bin", ".dat", "\0"};
+int is_file_valid(const char *filename, char *extensions[])
+{
     /*Find the position of the last '.' in the filename */
     const char *dot = strrchr(filename, '.');
     int i = 0;
 
-    if (dot == NULL) {
+    if (dot == NULL)
+    {
         return 0; /* No extension found */
     }
-    
-    while (*extensions[i] != '\0') {
-        if (strcasecmp(dot, extensions[i]) == 0) { /* Compare the extension with the expected one */
+
+    while (*extensions[i] != '\0')
+    {
+        if (strcasecmp(dot, extensions[i]) == 0)
+        {                                      /* Compare the extension with the expected one */
             FILE *file = fopen(filename, "r"); /* check if the file exists */
-            if (file != NULL) {
+            if (file != NULL)
+            {
                 fclose(file); /* Close the file if it exists */
-                return 1; /* File exists and has a valid extension */
-            } else {
+                return 1;     /* File exists and has a valid extension */
+            }
+            else
+            {
                 return 0; /* File does not exist or cannot be accessed */
             }
             return 1;
@@ -142,6 +172,54 @@ int isFileValid(const char *filename) {
         i++;
     }
     return 0;
+}
+
+char *load_file(char **extensions, char *s_type)
+{
+    char *buffer;
+    while (1)
+    {
+        printf("Input relative-path of %s file to load from:\n", s_type);
+        fseek(stdin, 0, SEEK_END);
+
+        buffer = get_filepath();
+        if (buffer != NULL)
+        {
+            if (is_file_valid(buffer, extensions))
+            {
+                break;
+            }
+            else
+            {
+                puts("\nRelative file path is invalid. Please try again!\n");
+            }
+        }
+    }
+    return buffer;
+}
+
+char *new_save_file(void)
+{
+    char *buffer;
+    char *ext;
+    while (1)
+    {
+        puts("Input relative-filepath with .bin extension to create/overwrite persistent Save File and press ENTER.\nOr press ENTER without input to play without saving.\n");
+        buffer = get_filepath();
+
+        if (buffer == NULL || !buffer[0])
+        {
+            puts("No save file created.\n");
+            break;
+        }
+        ext = strrchr(buffer, '.');
+        if (ext && !strcasecmp(ext, ".bin"))
+        {
+            return buffer;
+        }
+        puts("The input file does not end with .bin .\n");
+    }
+    return NULL;
 }
 
 #endif

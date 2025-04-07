@@ -3,63 +3,66 @@
 #include "../include/main.h"
 #include "../include/state_utils.h"
 #include "../include/file_utils.h"
+#include "save.c"
 
-void call_state(Game *game)
+#define MAX_NUM_WORDS 1000
+
+void call_state(Game *game, Stats* stats)
 {
     switch (game->state)
     {
-    case START:
-        /** prompt user to start new game or load save, reject other inputs */
-        break;
-    case NEW_GAME:
-        /** prompt user for file input, reject other inputs */
-        break;
-    case LOAD:
-        /** prompt user for save file, reject other inputs */
-        break;
     case WIN:
         /** display game stats, save game, back to start on user press */
-        display_win(game);
+        win(game, stats);
         break;
     case LOSE:
         /** display game stats, save game, back to start on user press */
-        display_lose(game);
+        lose(game, stats);
         break;
     case TURN:
         /** prompt user for guess, and checks guess */
-        turn(game);
-        break;
-    case SAVE:
-        /** save game, then return to previous/next state */
+        turn(game, stats);
         break;
     }
 }
 
-Game *start_new_game(void)
+Game *start_game(Stats* stats)
 {
-    char *buffer;
+    return get_user_input() ? new_game() : load_game(stats);
+}
+
+Game *load_game(Stats* stats)
+{
+    Game *game;
+    char *load_file_path;
+    char *valid_bin_file_extensions[] = {".bin", "\0"};
+    while (1)
+    {
+        load_file_path = load_file(valid_bin_file_extensions, ".bin");
+        game = load_from_save_file(load_file_path, stats);
+        if (game != NULL)
+        {
+            break;
+        }
+        puts("Unable to load save from file, please try again or restart program.\n");
+    }
+    return game;
+}
+
+Game *new_game(void)
+{
+    char *valid_txt_file_extensions[] = {".pdf", ".txt", ".doc", ".bin", ".dat", "\0"};
+
+    char *save_filepath;
     char **string_arr;
-    int num_guesses;
     Game *game = (Game *)malloc(sizeof(Game));
+
+    save_filepath = new_save_file();
+    game->filepath = save_filepath;
 
     while (1)
     {
-        while (1)
-        {
-            buffer = get_filepath();
-            if (buffer != NULL)
-            {
-                buffer[strcspn(buffer, "\n")] = 0;
-                if (isFileValid(buffer))
-                {
-                    break;
-                }else{
-                    puts("\nRelative file path is invalid. Please try again!\n");
-                }
-            }
-        }
-        string_arr = file_to_string_array(buffer, 1000);
-        free(buffer);
+        string_arr = file_to_string_array(load_file(valid_txt_file_extensions, "text"), MAX_NUM_WORDS);
         remove_banned_words(&string_arr);
 
         if (array_len(string_arr) > 0)
@@ -67,8 +70,7 @@ Game *start_new_game(void)
             game->chosen_word = (Chosen_Word *)malloc(sizeof(Chosen_Word));
             game->chosen_word->val = strdup(get_random_word(string_arr));
             game->chosen_word->len = dynamic_string_len(game->chosen_word->val);
-            num_guesses = game->chosen_word->len;
-            game->guessed_words = (char **)malloc(sizeof(char *) * num_guesses);
+            game->guessed_words = (char **)malloc(sizeof(char *) * game->chosen_word->len);
             free_string_array(string_arr, array_len(string_arr));
             game->turn = 0;
             game->state = TURN;
@@ -87,7 +89,7 @@ Game *start_new_game(void)
  *
  * @param game
  */
-void turn(Game *game)
+void turn(Game *game, Stats* stats)
 { /** check turn number < chosen word len outside */
     int *result;
     char *guess = (char *)malloc(sizeof(char) * (game->chosen_word->len + 1));
@@ -107,6 +109,8 @@ void turn(Game *game)
     };
     result = check_guess(guess, game->chosen_word->val, game->chosen_word->len);
 
+    save_to_file(game, stats);
+    
     if (isWin(result, game->chosen_word->len))
     {
         game->state = WIN;
@@ -119,6 +123,22 @@ void turn(Game *game)
     /** don't free(guess). the game->guessed_words[i] references it */
     free(result);
     /** else still state = turn */
+}
+
+void win(Game* game, Stats* stats){
+    stats->wins++;
+    stats->streak++;
+
+    save_to_file(game, stats);
+    display_win(game);
+}
+
+void lose(Game* game, Stats* stats){
+    stats->losses++;
+    stats->streak = 0;
+
+    save_to_file(game, stats);
+    display_lose(game);
 }
 
 /**
@@ -146,9 +166,10 @@ int isWin(int *result, int len)
  *
  * @param game
  */
-void free_game(Game *game)
+void free_game(Game *game, Stats* stats)
 {
     int i = 0;
+    free(stats);
     free(game->filepath);
     free(game->chosen_word->val);
     free(game->chosen_word);
