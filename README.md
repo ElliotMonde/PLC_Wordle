@@ -1,7 +1,7 @@
 # 50.051 PLC Project - Wordle Game
 Authors: [Ernest Tan](https://github.com/Qaisel), [Elliot Phua](https://github.com/ElliotMonde), [Christabel Lim](https://github.com/christableh), [Yap Jing Yee](https://github.com/jingyeeyap)
 
-<img width="511" alt="image" src="https://github.com/user-attachments/assets/5900b56c-d152-4b96-8957-e90c592208c1" />
+<img width="476" alt="image" src="https://github.com/user-attachments/assets/edd85e2b-0e41-4dff-a4e1-b7d332116b7e" />
 
 ## Table Of Content
 
