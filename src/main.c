@@ -21,7 +21,7 @@ void run_game(){
         /* Ask if user wants to play again */
         printf("\nWould you like to play again? (y/n): ");
         scanf(" %c", &input);
-        /* Clear the input buffer from the */
+        /* Clear extra characters in the input buffer from scanf */
         while (getchar() != '\n');
 
         play_again = (input == 'y' || input == 'Y');
