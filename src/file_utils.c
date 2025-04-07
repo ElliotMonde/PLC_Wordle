@@ -11,12 +11,17 @@
 int get_user_input(void)
 {
     char c;
+    int ch;
 
     while (1)
     {
         puts("[n] New Game\n[l] Load Game\n");
         c = fgetc(stdin);
         fseek(stdin, 0, SEEK_END);
+
+        /* Clear the remaining characters including newline */
+        while ((ch = getchar()) != '\n' && ch != EOF);
+
         switch (c)
         {
         case 'n':
@@ -183,7 +188,7 @@ char *load_file(char **extensions, char *s_type)
         fseek(stdin, 0, SEEK_END);
 
         buffer = get_filepath();
-        if (buffer != NULL)
+        if (buffer != NULL && buffer[0] != '\0')
         {
             if (is_file_valid(buffer, extensions))
             {
