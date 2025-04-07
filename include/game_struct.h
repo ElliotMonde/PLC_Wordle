@@ -2,7 +2,12 @@
 #define GAME_STRUCT_H
 
 #include "string_utils.h"
-
+typedef struct
+{
+    int wins;
+    int losses;
+    int streak;
+} Stats;
 typedef struct
 {
     int state;

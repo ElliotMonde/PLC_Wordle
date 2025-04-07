@@ -5,49 +5,7 @@
 #include "../include/file_utils.h"
 #include "../include/save.h"
 
-/*
-void saveGame(save_stats *playerFile, const char *fileName)
-{
-    FILE *sFile = fopen(fileName, "wb");
-    if (!sFile)
-    {
-        perror("Invalid Save File Name");
-        return;
-    }
-    fwrite(playerFile, sizeof(save_stats), 1, sFile);
-
-    int pathLength = (playerFile->gameInstance.filepath) ? strlen(playerFile->gameInstance.filepath) + 1 : 0;
-    fwrite(&pathLength, sizeof(int), 1, sFile);
-    if (pathLength > 0)
-    {
-        fwrite(playerFile->gameInstance.filepath, sizeof(char), pathLength, sFile);
-    }
-
-    int wordLength = (playerFile->gameInstance.chosen_word->val) ? strlen(playerFile->gameInstance.chosen_word->val) + 1 : 0;
-    fwrite(&wordLength, sizeof(int), 1, sFile);
-    if (wordLength > 0)
-    {
-        fwrite(playerFile->gameInstance.chosen_word->val, sizeof(char), wordLength, sFile);
-    }
-
-    int guessedCount = 0;
-    while (playerFile->gameInstance.guessed_words && playerFile->gameInstance.guessed_words[guessedCount])
-    {
-        guessedCount++;
-    }
-    fwrite(&guessedCount, sizeof(int), 1, sFile);
-    for (int i = 0; i < guessedCount; i++)
-    {
-        int guessLen = strlen(playerFile->gameInstance.guessed_words[i]) + 1;
-        fwrite(&guessLen, sizeof(int), 1, sFile);
-        fwrite(playerFile->gameInstance.guessed_words[i], sizeof(char), guessLen, sFile);
-    }
-    fclose(sFile);
-}
-
-*/
-
-Game *load_from_save_file(char *filepath)
+Game *load_from_save_file(char *filepath, Stats* stats)
 {
     int i;
     FILE *f;
@@ -64,6 +22,11 @@ Game *load_from_save_file(char *filepath)
         perror("load_game: Error: could not open file.");
         return NULL;
     }
+
+    fread(&stats->wins, sizeof(int), 1, f);
+    fread(&stats->losses, sizeof(int), 1, f);
+    fread(&stats->streak, sizeof(int), 1, f);
+
     fread(&game->state, sizeof(int), 1, f);
     fread(&game->turn, sizeof(int), 1, f);
 
@@ -87,21 +50,36 @@ Game *load_from_save_file(char *filepath)
     return game;
 }
 
-/*
+void save_to_file(Game* game, Stats* stat){
 
-void updateStats(save_stats *playerFile, int result)
-{
-    if (result == 1)
+    int i;
+
+    if (game->filepath != NULL)
     {
-        playerFile->totalWins++;
-        playerFile->streak++;
-    }
-    else if (result == 0)
-    {
-        playerFile->totalLosses++;
-        playerFile->streak = 0;
+        FILE *f = fopen(game->filepath, "wb");
+        if (!f){
+            perror("save_to_file: unable to open file.");
+        }
+
+        fwrite(&stat->wins, sizeof(int), 1, f);
+        fwrite(&stat->losses, sizeof(int), 1, f);
+        fwrite(&stat->streak, sizeof(int), 1, f);
+
+        fwrite(&game->state, sizeof(int), 1, f);
+        fwrite(&game->turn, sizeof(int), 1, f);
+
+        fwrite(&game->chosen_word->len, sizeof(int), 1, f);
+        fwrite(game->chosen_word->val, sizeof(char), game->chosen_word->len, f);
+
+        for (i = 0; i < game->turn; i++){
+            fwrite(game->guessed_words[i], sizeof(char) * (game->chosen_word->len + 1), 1, f);
+        }
+        
+        fclose(f);
     }
 }
+
+/*
 
 void free_save_stats(save_stats *playerFile)
 {

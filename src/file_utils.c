@@ -50,7 +50,7 @@ char *get_filepath(void)
     return filepath;
 }
 
-int check_file_type(char *filename, char* ext)
+int check_file_type(char *filename, char *ext)
 {
     char file_type[5];
     int ext_len = dynamic_string_len(ext);
@@ -138,11 +138,11 @@ void free_string_array(char **string_array, int len)
 /**
  * @brief
  * Function to check if a file is either .pdf or .txt
- * 
+ *
  * @param filename const char*
  * @author Jing Yee
  */
-int is_file_valid(const char *filename, char* extensions[])
+int is_file_valid(const char *filename, char *extensions[])
 {
     /*Find the position of the last '.' in the filename */
     const char *dot = strrchr(filename, '.');
@@ -174,15 +174,17 @@ int is_file_valid(const char *filename, char* extensions[])
     return 0;
 }
 
-char *load_file(char **extensions, char* s_type){
+char *load_file(char **extensions, char *s_type)
+{
     char *buffer;
     while (1)
     {
-        printf("Input relative-path of %s file to load saved file from:\n", s_type);
+        printf("Input relative-path of %s file to load from:\n", s_type);
+        fseek(stdin, 0, SEEK_END);
+
         buffer = get_filepath();
         if (buffer != NULL)
         {
-            buffer[strcspn(buffer, "\n")] = 0;
             if (is_file_valid(buffer, extensions))
             {
                 break;
@@ -194,6 +196,30 @@ char *load_file(char **extensions, char* s_type){
         }
     }
     return buffer;
+}
+
+char *new_save_file(void)
+{
+    char *buffer;
+    char *ext;
+    while (1)
+    {
+        puts("Input relative-filepath with .bin extension to create/overwrite persistent Save File and press ENTER.\nOr press ENTER without input to play without saving.\n");
+        buffer = get_filepath();
+
+        if (buffer == NULL || !buffer[0])
+        {
+            puts("No save file created.\n");
+            break;
+        }
+        ext = strrchr(buffer, '.');
+        if (ext && !strcasecmp(ext, ".bin"))
+        {
+            return buffer;
+        }
+        puts("The input file does not end with .bin .\n");
+    }
+    return NULL;
 }
 
 #endif

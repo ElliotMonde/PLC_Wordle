@@ -13,11 +13,14 @@ enum State
     SAVE
 };
 
-void call_state(Game *game);
+void call_state(Game *game, Stats* stat);
 Game* new_game(void);
-Game *start_game(void);
-Game *load_game(void);
-void turn(Game *game);
+Game *start_game(Stats* stats);
+Game *load_game(Stats* stats);
+void turn(Game *game, Stats* stats);
+void win(Game *game, Stats *stats);
+void lose(Game *game, Stats *stats);
+
 int isWin(int *result, int len);
 int is_new_guess(char *guess, char **guessed_words, int turns);
 void display_guesses(char **guessed_words);
