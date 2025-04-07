@@ -4,6 +4,7 @@
 #define GREEN "\033[1;32m"
 #define YELLOW "\033[1;33m"
 #define RED "\033[1;31m"
+#define BLUE "\033[0;34m"
 #define GREY "\033[0;37m"
 #define CLEAR_SCREEN "\033[1;1H\033[2J"
 
