@@ -1,7 +1,7 @@
 #ifndef STATE_UTILS_H
 #define STATE_UTILS_H
 #include "string_utils.h"
-#include "save.h"
+
 enum State
 {
     START,
@@ -23,8 +23,10 @@ typedef struct
 } Game;
 
 void call_state(Game *game);
-Game* start_new_game(void);
-void turn(Game* game);
+Game* new_game(void);
+Game *start_game(void);
+Game *load_game(void);
+void turn(Game *game);
 int isWin(int *result, int len);
 int is_new_guess(char *guess, char **guessed_words, int turns);
 void display_guesses(char **guessed_words);

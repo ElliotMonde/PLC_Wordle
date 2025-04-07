@@ -5,18 +5,12 @@
 #include "../include/file_utils.h"
 #include "../include/save.h"
 
+#define MAX_NUM_WORDS 1000
+
 void call_state(Game *game)
 {
     switch (game->state)
     {
-    case START:
-        /** Introduce game */
-        printf("Welcome to the Game!\n");
-        game->state = LOAD;
-        break;
-    case LOAD:
-        /** prompt user for save file or new, reject other inputs */        
-        break;
     case WIN:
         /** display game stats, save game, back to start on user press */
         display_win(game);
@@ -33,34 +27,47 @@ void call_state(Game *game)
         /** save game, then return to previous/next state */
         break;
     }
-}z
+}
 
-
-
-Game *start_new_game(void)
+Game *start_game(void)
 {
-    char *buffer;
+    return get_user_input() ? new_game() : load_game();
+}
+
+Game *load_game(void)
+{
+    /*
+    Game* game;
+    char* load_file_path;
+    char *valid_bin_file_extensions[] = {"bin", "\0"};
+    while(1){
+        load_file_path = load_file(valid_bin_file_extensions,".bin");
+        game = load_from_save_file(load_file_path);
+        if (game != NULL){
+            break;
+        }
+        puts("Unable to load save from file, please try again or restart program.\n");
+    }
+        
+    return game;
+    */
+
+    return new_game();
+}
+
+Game *new_game(void)
+{
+    char *valid_txt_file_extensions[] = {".pdf", ".txt", ".doc", ".bin", ".dat", "\0"};
     char **string_arr;
     int num_guesses;
     Game *game = (Game *)malloc(sizeof(Game));
+    /**
+     * TODO
+     * Create new save file, prompt for relative filepath without extension, if wishes to autosave else continue
+     */
     while (1)
     {
-        while (1)
-        {
-            buffer = get_filepath();
-            if (buffer != NULL)
-            {
-                buffer[strcspn(buffer, "\n")] = 0;
-                if (isFileValid(buffer))
-                {
-                    break;
-                }else{
-                    puts("\nRelative file path is invalid. Please try again!\n");
-                }
-            }
-        }
-        string_arr = file_to_string_array(buffer, 1000);
-        free(buffer);
+        string_arr = file_to_string_array(load_file(valid_txt_file_extensions, "text"), MAX_NUM_WORDS);
         remove_banned_words(&string_arr);
 
         if (array_len(string_arr) > 0)

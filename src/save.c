@@ -80,12 +80,12 @@ int loadGame(saveFile * playerFile, const char * fileName){
 
 
 void updateStats(saveFile * playerFile, int result) {
-    if (result == 1) { // Win
+    if (result == 1) { 
         playerFile->totalWins++;
         playerFile->streak++;
-    } else if (result == 0) { // Loss
+    } else if (result == 0) {
         playerFile->totalLosses++;
-        playerFile->streak = 0; // Reset streak on loss
+        playerFile->streak = 0;
     }
 }
 
@@ -116,3 +116,4 @@ void freeSaveFile(saveFile *playerFile) {
     }
 }
 #endif
+/** EOF **/

@@ -17,3 +17,4 @@ void updateStats(saveFile * playerFile, int result);
 void freeSaveFile(saveFile * playerFile);
 
 #endif
+/** EOF **/
