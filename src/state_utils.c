@@ -30,8 +30,11 @@ void call_state(Game *game, Stats *stats)
 
 Game *start_game(Stats *stats)
 {
+    stats->wins = 0;
+    stats->losses = 0;
+    stats->streak = 0;
     print_welcome();
-    return get_user_input() ? new_game() : load_game(stats);
+    return get_user_input() ? new_game(stats) : load_game(stats);
 }
 
 Game *load_game(Stats *stats)
@@ -52,7 +55,7 @@ Game *load_game(Stats *stats)
     return game;
 }
 
-Game *new_game(void)
+Game *new_game(Stats* stats)
 {
     char *valid_txt_file_extensions[] = {".pdf", ".txt", ".doc", ".bin", ".dat", "\0"};
 
@@ -62,6 +65,9 @@ Game *new_game(void)
 
     save_filepath = new_save_file();
     game->filepath = save_filepath;
+    if (is_file_valid(game->filepath, valid_txt_file_extensions)){
+        load_from_save_file(game->filepath, stats);
+    }
 
     while (1)
     {
@@ -137,7 +143,7 @@ void win(Game *game, Stats *stats)
     stats->streak++;
 
     save_to_file(game, stats);
-    display_win(game);
+    display_win(game, stats);
 }
 
 void lose(Game *game, Stats *stats)
@@ -146,7 +152,7 @@ void lose(Game *game, Stats *stats)
     stats->streak = 0;
 
     save_to_file(game, stats);
-    display_lose(game);
+    display_lose(game, stats);
 }
 
 /**
@@ -223,15 +229,17 @@ int is_new_guess(char *guess, char **guessed_words, int turns)
     return 1;
 }
 
-void display_win(Game *game)
+void display_win(Game *game, Stats* stats)
 {
     print_win_message();
     printf("\n🎉 " GREEN "You guessed the word:" RESET " %s!" GREEN " Congratulations!" RESET "\n", game->chosen_word->val);
+    printf(BLUE "Total Wins: %d Games\nTotal Losses: %d Games\nCurrent Streak: %d Games" RESET "\n", stats->wins, stats->losses, stats->streak);
 }
-void display_lose(Game *game)
+void display_lose(Game *game, Stats* stats)
 {
     print_game_over();
     printf("\n❌ " RED "Game Over! The word was: " RESET "%s\n", game->chosen_word->val);
+    printf(BLUE"Total Wins: %d Games\nTotal Losses: %d Games\nCurrent Streak: %d Games"RESET"\n", stats->wins, stats->losses, stats->streak);
 }
 
 #endif

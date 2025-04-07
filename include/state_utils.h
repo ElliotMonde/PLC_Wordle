@@ -14,7 +14,7 @@ enum State
 };
 
 void call_state(Game *game, Stats* stat);
-Game* new_game(void);
+Game* new_game(Stats* stats);
 Game *start_game(Stats* stats);
 Game *load_game(Stats* stats);
 void turn(Game *game, Stats* stats);
@@ -24,8 +24,8 @@ void lose(Game *game, Stats *stats);
 int isWin(int *result, int len);
 int is_new_guess(char *guess, char **guessed_words, int turns);
 void display_guesses(Game* game);
-void display_win(Game *game);
-void display_lose(Game *game);
+void display_win(Game *game, Stats* stats);
+void display_lose(Game *game, Stats* stats);
 void free_game(Game *game, Stats* stats);
 #endif
 /** EOF **/
