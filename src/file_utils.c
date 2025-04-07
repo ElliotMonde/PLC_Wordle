@@ -4,7 +4,7 @@
 #include "../include/main.h"
 #include "../include/file_utils.h"
 #include "../include/string_utils.h"
-
+#include "../include/gui.h"
 #define MAX_WORDS 1000
 #define BUFFER_SIZE 1024
 
@@ -14,7 +14,7 @@ int get_user_input(void)
 
     while (1)
     {
-        puts("[n] New Game\n[l] Load Game\n");
+        puts("[n] - Start New Game\n[l] - Load Game\n");
         c = fgetc(stdin);
         fseek(stdin, 0, SEEK_END);
         switch (c)
@@ -47,6 +47,7 @@ char *get_filepath(void)
     }
 
     filepath[strcspn(filepath, "\n")] = 0;
+    fseek(stdin, 0, SEEK_END);
     return filepath;
 }
 
@@ -115,6 +116,7 @@ char **file_to_string_array(char *filename, int array_size)
 
     string_array[i] = NULL;
     fclose(f);
+    fseek(stdin, 0, SEEK_END);
     return string_array;
 }
 
@@ -202,14 +204,15 @@ char *new_save_file(void)
 {
     char *buffer;
     char *ext;
+    
+    print_welcome();
     while (1)
     {
-        puts("Input relative-filepath with .bin extension to create/overwrite persistent Save File and press ENTER.\nOr press ENTER without input to play without saving.\n");
+        puts("[] - Input relative-filepath with .bin extension to create/overwrite persistent Save File and press ENTER.\n\n[ENTER] - press ENTER without input to play without saving.\n");
         buffer = get_filepath();
 
         if (buffer == NULL || !buffer[0])
         {
-            puts("No save file created.\n");
             break;
         }
         ext = strrchr(buffer, '.');
@@ -219,6 +222,7 @@ char *new_save_file(void)
         }
         puts("The input file does not end with .bin .\n");
     }
+    puts("No save file created.\n");
     return NULL;
 }
 

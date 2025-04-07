@@ -3,11 +3,12 @@
 #include "../include/main.h"
 #include "../include/state_utils.h"
 #include "../include/file_utils.h"
+#include "gui.c"
 #include "save.c"
 
 #define MAX_NUM_WORDS 1000
 
-void call_state(Game *game, Stats* stats)
+void call_state(Game *game, Stats *stats)
 {
     switch (game->state)
     {
@@ -15,6 +16,7 @@ void call_state(Game *game, Stats* stats)
         /** display game stats, save game, back to start on user press */
         win(game, stats);
         break;
+
     case LOSE:
         /** display game stats, save game, back to start on user press */
         lose(game, stats);
@@ -26,12 +28,13 @@ void call_state(Game *game, Stats* stats)
     }
 }
 
-Game *start_game(Stats* stats)
+Game *start_game(Stats *stats)
 {
+    print_welcome();
     return get_user_input() ? new_game() : load_game(stats);
 }
 
-Game *load_game(Stats* stats)
+Game *load_game(Stats *stats)
 {
     Game *game;
     char *load_file_path;
@@ -74,7 +77,7 @@ Game *new_game(void)
             free_string_array(string_arr, array_len(string_arr));
             game->turn = 0;
             game->state = TURN;
-            printf("(for testing only) chosen word: %s\n", game->chosen_word->val);
+            /*printf("(for testing only) chosen word: %s\n", game->chosen_word->val);*/
             return game; /** has valid word, choose random valid word, return */
         }
         else
@@ -89,16 +92,19 @@ Game *new_game(void)
  *
  * @param game
  */
-void turn(Game *game, Stats* stats)
+void turn(Game *game, Stats *stats)
 { /** check turn number < chosen word len outside */
     int *result;
     char *guess = (char *)malloc(sizeof(char) * (game->chosen_word->len + 1));
+    print_welcome();
+    display_guesses(game);
+
     game->turn += 1;
-
-    display_guesses(game->guessed_words);
     printf("\n~~~ Turn %d ~~~\n", game->turn);
+    printf("\n%d-letter word...\n", game->chosen_word->len);
+    printf("\nTurns Left: %d\n", game->chosen_word->len - game->turn);
 
-    puts("Input next guess:\n");
+    puts("Input next guess:");
     if (fgets(guess, game->chosen_word->len + 1, stdin) != NULL)
     {
         if (is_new_guess(guess, game->guessed_words, game->turn))
@@ -108,9 +114,9 @@ void turn(Game *game, Stats* stats)
         fseek(stdin, 0, SEEK_END);
     };
     result = check_guess(guess, game->chosen_word->val, game->chosen_word->len);
+    print_guess_feedback(guess, game->chosen_word);
 
     save_to_file(game, stats);
-    
     if (isWin(result, game->chosen_word->len))
     {
         game->state = WIN;
@@ -125,7 +131,8 @@ void turn(Game *game, Stats* stats)
     /** else still state = turn */
 }
 
-void win(Game* game, Stats* stats){
+void win(Game *game, Stats *stats)
+{
     stats->wins++;
     stats->streak++;
 
@@ -133,7 +140,8 @@ void win(Game* game, Stats* stats){
     display_win(game);
 }
 
-void lose(Game* game, Stats* stats){
+void lose(Game *game, Stats *stats)
+{
     stats->losses++;
     stats->streak = 0;
 
@@ -166,7 +174,7 @@ int isWin(int *result, int len)
  *
  * @param game
  */
-void free_game(Game *game, Stats* stats)
+void free_game(Game *game, Stats *stats)
 {
     int i = 0;
     free(stats);
@@ -181,9 +189,18 @@ void free_game(Game *game, Stats* stats)
     free(game);
 }
 
-void display_guesses(char **guessed_words)
+/**
+ * @brief display the previously guessed words and show the correct or partial correctness at each slot.
+ *
+ * @param game = Game*
+ */
+void display_guesses(Game *game)
 {
-    /** display the previously guessed words and show the correct or partial correctness at each slot, use check_guess */
+    int i;
+    for (i = 0; i < game->turn; i++)
+    {
+        print_guess_feedback(game->guessed_words[i], game->chosen_word);
+    }
 }
 
 /**
@@ -208,26 +225,13 @@ int is_new_guess(char *guess, char **guessed_words, int turns)
 
 void display_win(Game *game)
 {
-    /** display win */
-
-    /** placeholder text*/
-    puts("Win game!\n");
-    printf("Word to guess: %s\n", game->chosen_word->val);
-    /** remove placeholder */
+    print_win_message();
+    printf("\n🎉 " GREEN "You guessed the word:" RESET " %s!" GREEN " Congratulations!" RESET "\n", game->chosen_word->val);
 }
 void display_lose(Game *game)
 {
-    /** display lose */
-
-    /** placeholder text*/
-    puts("Lose game!\n");
-    printf("Word to guess: %s\n", game->chosen_word->val);
-    /** remove placeholder */
-}
-
-void display_start_screen(void)
-{
-    /** allow user to choose between new game or resume game, and other relevant display text */
+    print_game_over();
+    printf("\n❌ " RED "Game Over! The word was: " RESET "%s\n", game->chosen_word->val);
 }
 
 #endif

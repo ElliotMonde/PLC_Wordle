@@ -2,6 +2,7 @@
 #include "file_utils.c"
 #include "string_utils.c"
 #include "state_utils.c"
+#include "../include/gui.h"
 
 int main(int argc, char **argv)
 {
