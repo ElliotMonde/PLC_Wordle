@@ -23,10 +23,9 @@ void lose(Game *game, Stats *stats);
 
 int isWin(int *result, int len);
 int is_new_guess(char *guess, char **guessed_words, int turns);
-void display_guesses(char **guessed_words);
+void display_guesses(Game* game);
 void display_win(Game *game);
 void display_lose(Game *game);
-void display_start_screen(void);
 void free_game(Game *game, Stats* stats);
 #endif
 /** EOF **/
