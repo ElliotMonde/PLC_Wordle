@@ -166,9 +166,10 @@ int isWin(int *result, int len)
  *
  * @param game
  */
-void free_game(Game *game)
+void free_game(Game *game, Stats* stats)
 {
     int i = 0;
+    free(stats);
     free(game->filepath);
     free(game->chosen_word->val);
     free(game->chosen_word);

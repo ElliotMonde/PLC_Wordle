@@ -79,40 +79,5 @@ void save_to_file(Game* game, Stats* stat){
     }
 }
 
-/*
-
-void free_save_stats(save_stats *playerFile)
-{
-    if (playerFile->gameInstance.filepath)
-    {
-        free(playerFile->gameInstance.filepath);
-        playerFile->gameInstance.filepath = NULL;
-    }
-    if (playerFile->gameInstance.chosen_word)
-    {
-        if (playerFile->gameInstance.chosen_word->val)
-        {
-            free(playerFile->gameInstance.chosen_word->val);
-            playerFile->gameInstance.chosen_word->val = NULL;
-        }
-        free(playerFile->gameInstance.chosen_word);
-        playerFile->gameInstance.chosen_word = NULL;
-    }
-    if (playerFile->gameInstance.guessed_words)
-    {
-        int i = 0;
-        while (playerFile->gameInstance.guessed_words[i])
-        {
-            free(playerFile->gameInstance.guessed_words[i]);
-            playerFile->gameInstance.guessed_words[i] = NULL;
-            i++;
-        }
-        free(playerFile->gameInstance.guessed_words);
-        playerFile->gameInstance.guessed_words = NULL;
-    }
-}
-
-*/
-
 #endif
 /** EOF **/

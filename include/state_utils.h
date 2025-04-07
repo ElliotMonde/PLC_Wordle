@@ -27,6 +27,6 @@ void display_guesses(char **guessed_words);
 void display_win(Game *game);
 void display_lose(Game *game);
 void display_start_screen(void);
-void free_game(Game *game);
+void free_game(Game *game, Stats* stats);
 #endif
 /** EOF **/

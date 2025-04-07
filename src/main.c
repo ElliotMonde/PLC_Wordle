@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     call_state(game, stats);
 
     /** free malloc */
-    free_game(game);
+    free_game(game, stats);
 
     return 0;
 }
