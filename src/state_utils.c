@@ -3,7 +3,7 @@
 #include "../include/main.h"
 #include "../include/state_utils.h"
 #include "../include/file_utils.h"
-#include "../include/save.h"
+#include "save.c"
 
 #define MAX_NUM_WORDS 1000
 
@@ -36,23 +36,20 @@ Game *start_game(void)
 
 Game *load_game(void)
 {
-    /*
-    Game* game;
-    char* load_file_path;
+    Game *game;
+    char *load_file_path;
     char *valid_bin_file_extensions[] = {"bin", "\0"};
-    while(1){
-        load_file_path = load_file(valid_bin_file_extensions,".bin");
+    while (1)
+    {
+        load_file_path = load_file(valid_bin_file_extensions, ".bin");
         game = load_from_save_file(load_file_path);
-        if (game != NULL){
+        if (game != NULL)
+        {
             break;
         }
         puts("Unable to load save from file, please try again or restart program.\n");
     }
-        
     return game;
-    */
-
-    return new_game();
 }
 
 Game *new_game(void)
