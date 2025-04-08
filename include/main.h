@@ -6,7 +6,9 @@
 #include <time.h>
 #include <string.h>
 #include <math.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #endif
 /** EOF */

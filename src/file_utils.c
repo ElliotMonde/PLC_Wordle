@@ -17,6 +17,7 @@ int get_user_input(void)
         puts("[n] - Start New Game\n[l] - Load Game\n");
         c = fgetc(stdin);
         fseek(stdin, 0, SEEK_END);
+
         switch (c)
         {
         case 'n':
@@ -48,6 +49,7 @@ char *get_filepath(void)
 
     filepath[strcspn(filepath, "\n")] = 0;
     fseek(stdin, 0, SEEK_END);
+    
     return filepath;
 }
 

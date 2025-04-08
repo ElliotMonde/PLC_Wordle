@@ -65,7 +65,7 @@ Game *new_game(Stats* stats)
 
     save_filepath = new_save_file();
     game->filepath = save_filepath;
-    if (is_file_valid(game->filepath, valid_txt_file_extensions)){
+    if (game->filepath != NULL && is_file_valid(game->filepath, valid_txt_file_extensions)){
         load_from_save_file(game->filepath, stats);
     }
 
