@@ -10,26 +10,23 @@ void run_game(void){
     char input;
     
     while (1) {
-        game = start_game(stats);
-
-        while (game->state == TURN)
-        {
-            call_state(game, stats);
-        }
+        game = start_screen(stats);
         call_state(game, stats);
+        
+        /* free malloc for game*/
+        free_game(game);
 
         /* Ask if user wants to play again */
         puts(BLUE"\nWould you like to play again?\n[y] - Play Again\n[n] - Quit Program"RESET);
         input = fgetc(stdin);
-        /* Clear extra characters in the input buffer from scanf */
         fseek(stdin, 0, SEEK_END);
         if (!(input == 'y' || input == 'Y')){
             break;
         }
     }
 
-    /* free malloc */
-    free_game(game, stats);
+    /* free stats */
+    free_stats(stats);
 }
 
 int main(int argc, char **argv)

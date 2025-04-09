@@ -34,7 +34,7 @@ int get_user_input(void)
 
 char *get_filepath(void)
 {
-    char *filepath = malloc(sizeof(char) * 256);
+    char *filepath = malloc(sizeof(char) * FILEPATH_SIZE);
     if (!filepath)
     {
         perror("Memory allocation failed in file_utils.c.");

@@ -12,6 +12,9 @@ void call_state(Game *game, Stats *stats)
 {
     switch (game->state)
     {
+    case START:
+        start(game, stats);
+        break;
     case WIN:
         /** display game stats, save game, back to start on user press */
         win(game, stats);
@@ -28,7 +31,17 @@ void call_state(Game *game, Stats *stats)
     }
 }
 
-Game *start_game(Stats *stats)
+void start(Game* game, Stats* stats){
+    game->state = TURN;
+
+    while (game->state == TURN)
+    {
+        call_state(game, stats);
+    }
+    call_state(game, stats);
+}
+
+Game *start_screen(Stats *stats)
 {
     stats->wins = 0;
     stats->losses = 0;
@@ -63,10 +76,13 @@ Game *new_game(Stats* stats)
     char **string_arr;
     Game *game = (Game *)malloc(sizeof(Game));
 
-    save_filepath = new_save_file();
-    game->filepath = save_filepath;
-    if (game->filepath != NULL && is_file_valid(game->filepath, valid_txt_file_extensions)){
-        load_from_save_file(game->filepath, stats);
+    if (stats->filepath == NULL){
+        save_filepath = new_save_file();
+        stats->filepath = save_filepath;
+    }
+
+    if (stats->filepath != NULL && is_file_valid(stats->filepath, valid_txt_file_extensions)){
+        load_from_save_file(stats->filepath, stats);
     }
 
     while (1)
@@ -82,7 +98,7 @@ Game *new_game(Stats* stats)
             game->guessed_words = (char **)malloc(sizeof(char *) * game->chosen_word->len);
             free_string_array(string_arr, array_len(string_arr));
             game->turn = 0;
-            game->state = TURN;
+            game->state = START;
             /*printf("(for testing only) chosen word: %s\n", game->chosen_word->val);*/
             return game; /** has valid word, choose random valid word, return */
         }
@@ -180,11 +196,9 @@ int isWin(int *result, int len)
  *
  * @param game
  */
-void free_game(Game *game, Stats *stats)
+void free_game(Game *game)
 {
     int i = 0;
-    free(stats);
-    free(game->filepath);
     free(game->chosen_word->val);
     free(game->chosen_word);
     for (i = 0; i < game->turn; i++)
@@ -193,6 +207,16 @@ void free_game(Game *game, Stats *stats)
     }
     free(game->guessed_words);
     free(game);
+}
+
+/**
+ * @brief free all allocated memory to attributes in  stats instance and stats instance itself.
+ * 
+ * @param stats 
+ */
+void free_stats(Stats* stats){
+    free(stats->filepath);
+    free(stats);
 }
 
 /**
