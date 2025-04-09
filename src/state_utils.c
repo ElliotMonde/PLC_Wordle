@@ -19,7 +19,6 @@ void call_state(Game *game, Stats *stats)
         /** display game stats, save game, back to start on user press */
         win(game, stats);
         break;
-
     case LOSE:
         /** display game stats, save game, back to start on user press */
         lose(game, stats);
@@ -27,6 +26,8 @@ void call_state(Game *game, Stats *stats)
     case TURN:
         /** prompt user for guess, and checks guess */
         turn(game, stats);
+        break;
+    case END:
         break;
     }
 }
@@ -160,6 +161,7 @@ void win(Game *game, Stats *stats)
 
     save_to_file(game, stats);
     display_win(game, stats);
+    end(game, stats);
 }
 
 void lose(Game *game, Stats *stats)
@@ -169,6 +171,24 @@ void lose(Game *game, Stats *stats)
 
     save_to_file(game, stats);
     display_lose(game, stats);
+    end(game, stats);
+}
+
+void end(Game *game, Stats *stats)
+{
+    char input;
+    /* free malloc for game*/
+    free_game(game);
+
+    /* Ask if user wants to play again */
+    puts(BLUE "\nWould you like to play again?\n[y] - Play Again\n[n] - Quit Program" RESET);
+    input = fgetc(stdin);
+    fseek(stdin, 0, SEEK_END);
+    if (input == 'y' || input == 'Y')
+    {
+        game = new_game(stats);
+        call_state(game, stats);
+    }
 }
 
 /**

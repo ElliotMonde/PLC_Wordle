@@ -5,12 +5,10 @@
 enum State
 {
     START,
-    NEW_GAME,
-    LOAD,
     WIN,
     LOSE,
     TURN,
-    SAVE
+    END
 };
 
 void call_state(Game *game, Stats *stat);
@@ -21,6 +19,7 @@ Game *load_game(Stats *stats);
 void turn(Game *game, Stats *stats);
 void win(Game *game, Stats *stats);
 void lose(Game *game, Stats *stats);
+void end(Game *game, Stats *stats);
 
 int isWin(int *result, int len);
 int is_new_guess(char *guess, char **guessed_words, int turns);
