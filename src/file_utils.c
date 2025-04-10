@@ -184,7 +184,6 @@ char *load_file(char **extensions, char *s_type)
     while (1)
     {
         printf("Input relative-path of %s file to load from:\n", s_type);
-        fseek(stdin, 0, SEEK_END);
 
         buffer = get_filepath();
         if (buffer != NULL)
@@ -228,5 +227,14 @@ char *new_save_file(void)
     return NULL;
 }
 
+void clear_input_buffer() {
+    int ch;
+    time_t start = time(NULL);
+    while ((ch = getchar()) != '\n' && ch != EOF) {
+        if (time(NULL) - start > 1) { /* 1 second timeout */
+            break;
+        }
+    }
+}
 #endif
 /**  EOF **/

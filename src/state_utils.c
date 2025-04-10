@@ -55,24 +55,25 @@ Game *load_game(Stats *stats)
 {
     Game *game;
     char *load_file_path;
-    char *valid_bin_file_extensions[] = {".bin", "\0"};
+    char *valid_bin_file_extensions[] = {".bin", '\0'};
+
     while (1)
     {
         load_file_path = load_file(valid_bin_file_extensions, ".bin");
         game = load_from_save_file(load_file_path, stats);
         if (game != NULL)
         {
+            free_game(game);
             break;
         }
         puts("Unable to load save from file, please try again or restart program.\n");
     }
-    return game;
+
+    return new_game(stats);
 }
 
 Game *new_game(Stats* stats)
 {
-    char *valid_txt_file_extensions[] = {".pdf", ".txt", ".doc", ".bin", ".dat", "\0"};
-
     char *save_filepath;
     char **string_arr;
     Game *game = (Game *)malloc(sizeof(Game));
@@ -180,10 +181,10 @@ void end(Game *game, Stats *stats)
     /* free malloc for game*/
     free_game(game);
 
-    /* Ask if user wants to play again */
-    puts(BLUE "\nWould you like to play again?\n[y] - Play Again\n[n] - Quit Program" RESET);
+    clear_input_buffer();
+    puts(BLUE"\nWould you like to play again?\n[y] - Play Again\n[n] - Quit Program"RESET);
     input = fgetc(stdin);
-    fseek(stdin, 0, SEEK_END);
+    clear_input_buffer();
     if (input == 'y' || input == 'Y')
     {
         game = new_game(stats);
