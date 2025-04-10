@@ -7,12 +7,12 @@ typedef struct
     int wins;
     int losses;
     int streak;
+    char *filepath; /* save-file path for loading?*/
 } Stats;
 typedef struct
 {
     int state;
     int turn;
-    char *filepath; /* save-file path for loading?*/
     Chosen_Word *chosen_word;
     char **guessed_words;
 } Game;

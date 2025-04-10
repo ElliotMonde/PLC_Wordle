@@ -1,9 +1,9 @@
 #ifndef STRING_UTILS_H
 #define STRING_UTILS_H
-char *banned_two_letter_words[] = {"we", "We", "he", "He", "be", "Be", "is", "Is", "in", "In", "it", "It", "on", "On","of", "Of", "to", "To", "ve", "ll", "re", "as", "As", "at", "At", '\0'};
-char *banned_three_letter_words[] = {"she", "She", "are", "Are", "has", "Has", "had", "Had", '\0'};
-char *banned_four_letter_words[] = {"have", "Have", "they", "They", "them", "Them", "this", "This", "that", "That", '\0'};
-char *banned_five_letter_words[] = {"these", "These", "that", "That", '\0'};
+char *banned_two_letter_words[] = {"we", "We", "he", "He", "be", "Be", "is", "Is", "in", "In", "it", "It", "on", "On","of", "Of", "to", "To", "ve", "ll", "re", "as", "As", "at", "At", "\0"};
+char *banned_three_letter_words[] = {"she", "She", "are", "Are", "has", "Has", "had", "Had", "\0"};
+char *banned_four_letter_words[] = {"have", "Have", "they", "They", "them", "Them", "this", "This", "that", "That", "\0"};
+char *banned_five_letter_words[] = {"these", "These", "that", "That", "\0"};
 
 typedef struct {
     char *val;

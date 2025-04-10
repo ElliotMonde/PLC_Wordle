@@ -1,5 +1,6 @@
 #ifndef FILE_UTILS_H
 #define FILE_UTILS_H
+#define FILEPATH_SIZE 256
 int get_user_input(void);
 char *get_filepath(void);
 char **file_to_string_array(char *filename, int array_size);

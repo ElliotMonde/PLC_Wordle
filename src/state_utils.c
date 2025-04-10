@@ -3,14 +3,18 @@
 #include "../include/main.h"
 #include "../include/state_utils.h"
 #include "../include/file_utils.h"
+#include "gui.c"
 #include "save.c"
 
 #define MAX_NUM_WORDS 1000
 
-void call_state(Game *game, Stats* stats)
+void call_state(Game *game, Stats *stats)
 {
     switch (game->state)
     {
+    case START:
+        start(game, stats);
+        break;
     case WIN:
         /** display game stats, save game, back to start on user press */
         win(game, stats);
@@ -23,15 +27,31 @@ void call_state(Game *game, Stats* stats)
         /** prompt user for guess, and checks guess */
         turn(game, stats);
         break;
+    case END:
+        break;
     }
 }
 
-Game *start_game(Stats* stats)
-{
-    return get_user_input() ? new_game() : load_game(stats);
+void start(Game* game, Stats* stats){
+    game->state = TURN;
+
+    while (game->state == TURN)
+    {
+        call_state(game, stats);
+    }
+    call_state(game, stats);
 }
 
-Game *load_game(Stats* stats)
+Game *start_screen(Stats *stats)
+{
+    stats->wins = 0;
+    stats->losses = 0;
+    stats->streak = 0;
+    print_welcome();
+    return get_user_input() ? new_game(stats) : load_game(stats);
+}
+
+Game *load_game(Stats *stats)
 {
     Game *game;
     char *load_file_path;
@@ -49,7 +69,7 @@ Game *load_game(Stats* stats)
     return game;
 }
 
-Game *new_game(void)
+Game *new_game(Stats* stats)
 {
     char *valid_txt_file_extensions[] = {".pdf", ".txt", ".doc", ".bin", ".dat", "\0"};
 
@@ -57,8 +77,14 @@ Game *new_game(void)
     char **string_arr;
     Game *game = (Game *)malloc(sizeof(Game));
 
-    save_filepath = new_save_file();
-    game->filepath = save_filepath;
+    if (stats->filepath == NULL){
+        save_filepath = new_save_file();
+        stats->filepath = save_filepath;
+    }
+
+    if (stats->filepath != NULL && is_file_valid(stats->filepath, valid_txt_file_extensions)){
+        load_from_save_file(stats->filepath, stats);
+    }
 
     while (1)
     {
@@ -73,8 +99,8 @@ Game *new_game(void)
             game->guessed_words = (char **)malloc(sizeof(char *) * game->chosen_word->len);
             free_string_array(string_arr, array_len(string_arr));
             game->turn = 0;
-            game->state = TURN;
-            printf("(for testing only) chosen word: %s\n", game->chosen_word->val);
+            game->state = START;
+            /*printf("(for testing only) chosen word: %s\n", game->chosen_word->val);*/
             return game; /** has valid word, choose random valid word, return */
         }
         else
@@ -89,16 +115,19 @@ Game *new_game(void)
  *
  * @param game
  */
-void turn(Game *game, Stats* stats)
+void turn(Game *game, Stats *stats)
 { /** check turn number < chosen word len outside */
     int *result;
     char *guess = (char *)malloc(sizeof(char) * (game->chosen_word->len + 1));
+    print_welcome();
+    display_guesses(game);
+
     game->turn += 1;
-
-    display_guesses(game->guessed_words);
     printf("\n~~~ Turn %d ~~~\n", game->turn);
+    printf("\n%d-letter word...\n", game->chosen_word->len);
+    printf("\nTurns Left: %d\n", game->chosen_word->len - game->turn);
 
-    puts("Input next guess:\n");
+    puts("Input next guess:");
     if (fgets(guess, game->chosen_word->len + 1, stdin) != NULL)
     {
         if (is_new_guess(guess, game->guessed_words, game->turn))
@@ -108,9 +137,9 @@ void turn(Game *game, Stats* stats)
         fseek(stdin, 0, SEEK_END);
     };
     result = check_guess(guess, game->chosen_word->val, game->chosen_word->len);
+    print_guess_feedback(guess, game->chosen_word);
 
     save_to_file(game, stats);
-    
     if (isWin(result, game->chosen_word->len))
     {
         game->state = WIN;
@@ -125,20 +154,41 @@ void turn(Game *game, Stats* stats)
     /** else still state = turn */
 }
 
-void win(Game* game, Stats* stats){
+void win(Game *game, Stats *stats)
+{
     stats->wins++;
     stats->streak++;
 
     save_to_file(game, stats);
-    display_win(game);
+    display_win(game, stats);
+    end(game, stats);
 }
 
-void lose(Game* game, Stats* stats){
+void lose(Game *game, Stats *stats)
+{
     stats->losses++;
     stats->streak = 0;
 
     save_to_file(game, stats);
-    display_lose(game);
+    display_lose(game, stats);
+    end(game, stats);
+}
+
+void end(Game *game, Stats *stats)
+{
+    char input;
+    /* free malloc for game*/
+    free_game(game);
+
+    /* Ask if user wants to play again */
+    puts(BLUE "\nWould you like to play again?\n[y] - Play Again\n[n] - Quit Program" RESET);
+    input = fgetc(stdin);
+    fseek(stdin, 0, SEEK_END);
+    if (input == 'y' || input == 'Y')
+    {
+        game = new_game(stats);
+        call_state(game, stats);
+    }
 }
 
 /**
@@ -166,11 +216,9 @@ int isWin(int *result, int len)
  *
  * @param game
  */
-void free_game(Game *game, Stats* stats)
+void free_game(Game *game)
 {
     int i = 0;
-    free(stats);
-    free(game->filepath);
     free(game->chosen_word->val);
     free(game->chosen_word);
     for (i = 0; i < game->turn; i++)
@@ -181,9 +229,28 @@ void free_game(Game *game, Stats* stats)
     free(game);
 }
 
-void display_guesses(char **guessed_words)
+/**
+ * @brief free all allocated memory to attributes in  stats instance and stats instance itself.
+ * 
+ * @param stats 
+ */
+void free_stats(Stats* stats){
+    free(stats->filepath);
+    free(stats);
+}
+
+/**
+ * @brief display the previously guessed words and show the correct or partial correctness at each slot.
+ *
+ * @param game = Game*
+ */
+void display_guesses(Game *game)
 {
-    /** display the previously guessed words and show the correct or partial correctness at each slot, use check_guess */
+    int i;
+    for (i = 0; i < game->turn; i++)
+    {
+        print_guess_feedback(game->guessed_words[i], game->chosen_word);
+    }
 }
 
 /**
@@ -206,28 +273,17 @@ int is_new_guess(char *guess, char **guessed_words, int turns)
     return 1;
 }
 
-void display_win(Game *game)
+void display_win(Game *game, Stats* stats)
 {
-    /** display win */
-
-    /** placeholder text*/
-    puts("Win game!\n");
-    printf("Word to guess: %s\n", game->chosen_word->val);
-    /** remove placeholder */
+    print_win_message();
+    printf("\n🎉 " GREEN "You guessed the word:" RESET " %s!" GREEN " Congratulations!" RESET "\n", game->chosen_word->val);
+    printf(BLUE "Total Wins: %d Games\nTotal Losses: %d Games\nCurrent Streak: %d Games" RESET "\n", stats->wins, stats->losses, stats->streak);
 }
-void display_lose(Game *game)
+void display_lose(Game *game, Stats* stats)
 {
-    /** display lose */
-
-    /** placeholder text*/
-    puts("Lose game!\n");
-    printf("Word to guess: %s\n", game->chosen_word->val);
-    /** remove placeholder */
-}
-
-void display_start_screen(void)
-{
-    /** allow user to choose between new game or resume game, and other relevant display text */
+    print_game_over();
+    printf("\n❌ " RED "Game Over! The word was: " RESET "%s\n", game->chosen_word->val);
+    printf(BLUE"Total Wins: %d Games\nTotal Losses: %d Games\nCurrent Streak: %d Games"RESET"\n", stats->wins, stats->losses, stats->streak);
 }
 
 #endif

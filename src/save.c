@@ -30,7 +30,7 @@ Game *load_from_save_file(char *filepath, Stats* stats)
     fread(&game->state, sizeof(int), 1, f);
     fread(&game->turn, sizeof(int), 1, f);
 
-    game->filepath = filepath;
+    stats->filepath = filepath;
 
     game->chosen_word = (Chosen_Word *)malloc(sizeof(Chosen_Word));
     fread(&game->chosen_word->len, sizeof(int), 1, f);
@@ -50,20 +50,20 @@ Game *load_from_save_file(char *filepath, Stats* stats)
     return game;
 }
 
-void save_to_file(Game* game, Stats* stat){
+void save_to_file(Game* game, Stats* stats){
 
     int i;
 
-    if (game->filepath != NULL)
+    if (stats->filepath != NULL)
     {
-        FILE *f = fopen(game->filepath, "wb");
+        FILE *f = fopen(stats->filepath, "wb");
         if (!f){
             perror("save_to_file: unable to open file.");
         }
 
-        fwrite(&stat->wins, sizeof(int), 1, f);
-        fwrite(&stat->losses, sizeof(int), 1, f);
-        fwrite(&stat->streak, sizeof(int), 1, f);
+        fwrite(&stats->wins, sizeof(int), 1, f);
+        fwrite(&stats->losses, sizeof(int), 1, f);
+        fwrite(&stats->streak, sizeof(int), 1, f);
 
         fwrite(&game->state, sizeof(int), 1, f);
         fwrite(&game->turn, sizeof(int), 1, f);
