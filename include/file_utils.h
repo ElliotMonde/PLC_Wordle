@@ -2,7 +2,7 @@
 #define FILE_UTILS_H
 #define FILEPATH_SIZE 256
 
-char *valid_txt_file_extensions[] = {".pdf", ".txt", ".doc", "\0"}; 
+char *valid_txt_file_extensions[] = {".pdf", ".txt", ".doc", NULL}; 
 
 int get_user_input(void);
 char *get_filepath(void);

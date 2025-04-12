@@ -120,7 +120,8 @@ Game *new_game(Stats* stats)
 void turn(Game *game, Stats *stats)
 { /** check turn number < chosen word len outside */
     int *result;
-    char *guess = (char *)malloc(sizeof(char) * (game->chosen_word->len + 1));
+    int c;
+    char *guess = (char *)malloc(sizeof(char) * (game->chosen_word->len + 2));
     print_welcome();
     display_guesses(game);
 
@@ -130,8 +131,13 @@ void turn(Game *game, Stats *stats)
     printf("\nTurns Left: %d\n", game->chosen_word->len - game->turn);
 
     puts("Input next guess:");
-    if (fgets(guess, game->chosen_word->len + 1, stdin) != NULL)
+    if (fgets(guess, game->chosen_word->len + 2, stdin) != NULL)
     {
+        guess[strcspn(guess, "\n")] = '\0'; /* remove the \n from fgets */
+        if (strlen(guess) == game->chosen_word->len + 1)    /* Clear the input buffer if the input was too long */
+        {
+            while ((c = getchar()) != '\n' && c != EOF);
+        }
         game->guessed_words[game->turn - 1] = guess;
     }
     fflush(stdin);
@@ -152,7 +158,6 @@ void turn(Game *game, Stats *stats)
     free(result);
     /** else still state = turn */
 }
-
 void win(Game *game, Stats *stats)
 {
     stats->wins++;
