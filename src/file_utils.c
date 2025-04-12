@@ -139,52 +139,40 @@ void free_string_array(char **string_array, int len)
     free(string_array);
 }
 
+
 /**
  * @brief
- * Function to check if a file is either .pdf or .txt
- *
+ * Function to check if a file is either one of the correct types
+ *  
  * @param filename const char*
- * @author Jing Yee
+ * @param extensions Array of valid extensions (must end with NULL).
  */
-int is_file_valid(const char *filename, char *extensions[])
-{
-    /*Find the position of the last '.' in the filename */
-    const char *dot = strrchr(filename, '.');
-    int i = 0;
+int is_file_valid(const char *filename, char *extensions[]) {
+    char *dot = strrchr(filename, '.'); /*Find the position of the last '.' in the filename */
+    int i;
+    
+    if (!filename || !extensions) return 0;  /* Guard against NULL inputs */
+    if (!dot) return 0;  /* No extension found */
 
-    if (dot == NULL)
-    {
-        return 0; /* No extension found */
-    }
-
-    while (*extensions[i] != '\0')
-    {
-        if (strcasecmp(dot, extensions[i]) == 0)
-        {                                      /* Compare the extension with the expected one */
-            FILE *file = fopen(filename, "r"); /* check if the file exists */
-            if (file != NULL)
-            {
-                fclose(file); /* Close the file if it exists */
-                return 1;     /* File exists and has a valid extension */
+    for (i = 0; extensions[i] != NULL; i++) {
+        if (strcasecmp(dot, extensions[i]) == 0) {
+            FILE *file = fopen(filename, "r");
+            if (file) {
+                fclose(file);   /* Close the file if it exists */
+                return 1;       /* File exists and has a valid extension */
             }
-            else
-            {
-                return 0; /* File does not exist or cannot be accessed */
-            }
-            return 1;
+            return 0;  /* File does not exist or cannot be accessed */
         }
-        i++;
     }
-    return 0;
+    return 0;  /* No matching extension */
 }
 
 char *load_file(char **extensions, char *s_type)
 {
     char *buffer;
     while (1)
-    {
+    {  
         printf("Input relative-path of %s file to load from:\n", s_type);
-
         buffer = get_filepath();
         if (buffer != NULL)
         {
