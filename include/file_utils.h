@@ -2,7 +2,7 @@
 #define FILE_UTILS_H
 #define FILEPATH_SIZE 256
 
-char *valid_txt_file_extensions[] = {".pdf", ".txt", ".doc", NULL}; 
+char *valid_txt_file_extensions[] = {".pdf", ".txt", ".doc", "\0"}; 
 
 int get_user_input(void);
 char *get_filepath(void);
@@ -10,6 +10,5 @@ char **file_to_string_array(char *filename, int array_size);
 void free_string_array(char **string_array, int len);
 int is_file_valid(const char *filename, char*extensions[]);
 char *load_file(char** extensions, char* s_type);
-void clear_input_buffer();
 #endif
 /** EOF **/

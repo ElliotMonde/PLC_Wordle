@@ -57,7 +57,7 @@ Game *load_game(Stats *stats)
     char *load_file_path;
     char *valid_bin_file_extensions[] = {".bin", NULL};
 
-    clear_input_buffer();
+    fflush(stdin);
     while (1)
     {
         load_file_path = load_file(valid_bin_file_extensions, ".bin");
@@ -134,7 +134,7 @@ void turn(Game *game, Stats *stats)
     {
         game->guessed_words[game->turn - 1] = guess;
     }
-    clear_input_buffer();
+    fflush(stdin);
     result = check_guess(guess, game->chosen_word->val, game->chosen_word->len);
     print_guess_feedback(guess, game->chosen_word);
 
@@ -182,7 +182,7 @@ void end(Game *game, Stats *stats)
     puts(BLUE"\nWould you like to play again?\n[y] - Play Again\n[n] - Quit Program"RESET);
     input = fgetc(stdin);
 
-    clear_input_buffer();
+    fflush(stdin);
     if (input == 'y' || input == 'Y')
     {
         game = new_game(stats);

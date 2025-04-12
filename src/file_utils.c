@@ -11,13 +11,11 @@
 int get_user_input(void)
 {
     char c;
-
     while (1)
     {
         puts("[n] - Start New Game\n[l] - Load Game\n");
         c = fgetc(stdin);
-        fseek(stdin, 0, SEEK_END);
-
+        fflush(stdin);
         switch (c)
         {
         case 'n':
@@ -48,8 +46,8 @@ char *get_filepath(void)
     }
 
     filepath[strcspn(filepath, "\n")] = 0;
-    fseek(stdin, 0, SEEK_END);
-    
+    fflush(stdin);
+
     return filepath;
 }
 
@@ -118,7 +116,7 @@ char **file_to_string_array(char *filename, int array_size)
 
     string_array[i] = NULL;
     fclose(f);
-    fseek(stdin, 0, SEEK_END);
+    fflush(stdin);
     return string_array;
 }
 
@@ -215,14 +213,5 @@ char *new_save_file(void)
     return NULL;
 }
 
-void clear_input_buffer() {
-    int ch;
-    time_t start = time(NULL);
-    while ((ch = getchar()) != '\n' && ch != EOF) {
-        if (time(NULL) - start > 1) { /* 1 second timeout */
-            break;
-        }
-    }
-}
 #endif
 /**  EOF **/
