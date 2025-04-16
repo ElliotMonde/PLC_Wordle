@@ -32,6 +32,15 @@ Win condition: Guess the word correctly before the 'Turns Left' counter hits 0
 
 Lose condition: If the word is not guessed correctly after the 'Turns Left' counter hits 0
 
+### Game Instructions/Controls
+<img width="498" alt="image" src="https://github.com/user-attachments/assets/43e06f74-9eb0-4a17-9d6f-79562f5ee02f" />
+
+After a game starts, a word will be chosen. Make a guess by typing your guess in the terminal and pressing `ENTER`. Try to guess the correct word before you run out of turns.
+
+<img width="436" alt="image" src="https://github.com/user-attachments/assets/bfcf2c4f-1a99-41b9-8109-78412e84528d" />
+
+You can quit the game at any time by pressing `CTRL+C`. Or pressing `n` and `ENTER` when prompted on the End Game Screen.
+
 ### Features
 - Custom word lists utilizing player provided text files as the game's dictionary
 - An autosave system that tracks the player's statistics, allowing players to pick the game back up from where they last left off
@@ -93,6 +102,15 @@ save file (located in src folder):
 text file (located in root directory):
   test_inp.txt
 ```
+
+The save file prompt will look like this:
+
+<img width="885" alt="image" src="https://github.com/user-attachments/assets/52a3de53-df30-425c-95e7-51a49e7ed2be" />
+
+The text file prompt will look like this:
+
+<img width="400" alt="image" src="https://github.com/user-attachments/assets/0ccf8681-85a4-4f6f-a85c-fc4d08b9f401" />
+
 
 ### Output
 
