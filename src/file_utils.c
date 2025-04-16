@@ -10,15 +10,22 @@
 
 int get_user_input(void)
 {
-    char c, tmp;
+    char c;
+
+    #ifndef __APPLE__
+    char tmp;
+    #endif
+
     while (1)
     {
         puts("[n] - Start New Game\n[l] - Load Game\n");
         c = fgetc(stdin);
         fflush(stdin);
-
+        
+        #ifndef __APPLE__
         /* clears existing buffer before asking for input */
         while ((tmp = getchar()) != '\n' && tmp != EOF);
+        #endif
         switch (c)
         {
         case 'n':

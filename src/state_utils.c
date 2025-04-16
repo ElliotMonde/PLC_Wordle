@@ -188,7 +188,12 @@ void lose(Game *game, Stats *stats)
 
 void end(Game *game, Stats *stats)
 {
-    char input, tmp;
+    char input;
+
+    #ifndef __APPLE__
+    char tmp;
+    #endif
+    
     /* free malloc for game*/
     free_game(game);
 
@@ -198,8 +203,10 @@ void end(Game *game, Stats *stats)
     fflush(stdin);
     if (input == 'y' || input == 'Y')
     {
+        #ifndef __APPLE__
         /* clears existing buffer before asking for input */
         while ((tmp = getchar()) != '\n' && tmp != EOF);
+        #endif
         game = new_game(stats);
         call_state(game, stats);
     }
