@@ -64,13 +64,19 @@ Game *load_game(Stats *stats)
         game = load_from_save_file(load_file_path, stats);
         if (game != NULL)
         {
-            free_game(game);
             break;
         }
         puts("Unable to load save from file, please try again or restart program.\n");
     }
 
-    return new_game(stats);
+    /* checks if the player is in the middle of a game or not, if not then start new game */
+    if (game->state == WIN || game->state == LOSE)
+    {
+        free_game(game);
+        return new_game(stats);
+    }
+
+    return game;
 }
 
 Game *new_game(Stats* stats)
@@ -103,6 +109,7 @@ Game *new_game(Stats* stats)
             game->turn = 0;
             game->state = START;
             /*printf("(for testing only) chosen word: %s\n", game->chosen_word->val);*/
+            save_to_file(game, stats); /* save game once a new word is selected */
             return game; /** has valid word, choose random valid word, return */
         }
         else
@@ -122,6 +129,7 @@ void turn(Game *game, Stats *stats)
     int *result;
     int c;
     char *guess = (char *)malloc(sizeof(char) * (game->chosen_word->len + 2));
+    memset(guess, '\0', game->chosen_word->len + 2);  /* Initialize buffer to null terminators to clear values in the malloc-ed space */
     print_welcome();
     display_guesses(game);
 
@@ -180,7 +188,7 @@ void lose(Game *game, Stats *stats)
 
 void end(Game *game, Stats *stats)
 {
-    char input;
+    char input, tmp;
     /* free malloc for game*/
     free_game(game);
 
@@ -190,6 +198,8 @@ void end(Game *game, Stats *stats)
     fflush(stdin);
     if (input == 'y' || input == 'Y')
     {
+        /* clears existing buffer before asking for input */
+        while ((tmp = getchar()) != '\n' && tmp != EOF);
         game = new_game(stats);
         call_state(game, stats);
     }

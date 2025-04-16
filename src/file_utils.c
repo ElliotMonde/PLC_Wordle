@@ -10,12 +10,15 @@
 
 int get_user_input(void)
 {
-    char c;
+    char c, tmp;
     while (1)
     {
         puts("[n] - Start New Game\n[l] - Load Game\n");
         c = fgetc(stdin);
         fflush(stdin);
+
+        /* clears existing buffer before asking for input */
+        while ((tmp = getchar()) != '\n' && tmp != EOF);
         switch (c)
         {
         case 'n':

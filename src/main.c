@@ -9,7 +9,7 @@ void run_game(void){
     Game *game;
     
     game = start_screen(stats);
-    call_state(game, stats);
+    start(game, stats);
 
     /* free stats */
     free_stats(stats);
